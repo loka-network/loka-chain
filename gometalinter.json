@@ -1,0 +1,12 @@
+{
+    "Linters": {
+        "vet": "go tool vet -composites=false :PATH:LINE:MESSAGE"
+    },
+    "Enable": [
+        "golint",
+        "unparam"
+    ],
+    "Deadline": "500s",
+    "Vendor": true,
+    "Cyclo": 11
+}
