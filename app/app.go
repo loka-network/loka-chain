@@ -31,6 +31,8 @@ import (
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
 
+	stdruntime "runtime"
+
 	"cosmossdk.io/client/v2/autocli"
 	"cosmossdk.io/core/appmodule"
 	"cosmossdk.io/log"
@@ -121,6 +123,7 @@ import (
 	ibctransfer "github.com/cosmos/ibc-go/v8/modules/apps/transfer"
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v8/modules/core"
+
 	// ibcclient "github.com/cosmos/ibc-go/v8/modules/core/02-client/client"
 	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
 	ibcconnectiontypes "github.com/cosmos/ibc-go/v8/modules/core/03-connection/types"
@@ -267,6 +270,13 @@ var (
 	_ runtime.AppI            = (*Evmos)(nil)
 )
 
+// GenesisState of the blockchain is represented here as a map of raw json
+// messages key'd by a identifier string.
+// The identifier is used to determine which module genesis information belongs
+// to so it may be appropriately routed during init chain.
+// Within this application default genesis information is retrieved from
+// the ModuleBasicManager which populates json from each BasicModule
+// object provided to it during init.
 type GenesisState map[string]json.RawMessage
 
 // Evmos implements an extended ABCI application. It is an application
@@ -287,6 +297,7 @@ type Evmos struct {
 	keys    map[string]*storetypes.KVStoreKey
 	tkeys   map[string]*storetypes.TransientStoreKey
 	memKeys map[string]*storetypes.MemoryStoreKey
+	okeys   map[string]*storetypes.ObjectStoreKey
 
 	// keepers
 	AccountKeeper    authkeeper.AccountKeeper
@@ -372,6 +383,7 @@ func NewEvmos(
 		app.SetPrepareProposal(handler.PrepareProposalHandler())
 		app.SetProcessProposal(handler.ProcessProposalHandler())
 	})
+	blockSTMEnabled := cast.ToString(appOpts.Get(srvflags.EVMBlockExecutor)) == "block-stm"
 
 	// enable optimistic execution
 	baseAppOptions = append(baseAppOptions, baseapp.SetOptimisticExecution())
@@ -411,6 +423,7 @@ func NewEvmos(
 	// Add the EVM transient store key
 	tkeys := storetypes.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
 	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	okeys := storetypes.NewObjectStoreKeys(banktypes.ObjectStoreKey, evmtypes.ObjectStoreKey)
 
 	// load state streaming if enabled
 	if err := bApp.RegisterStreamingServices(appOpts, keys); err != nil {
@@ -428,6 +441,7 @@ func NewEvmos(
 		keys:              keys,
 		tkeys:             tkeys,
 		memKeys:           memKeys,
+		okeys:             okeys,
 	}
 
 	// init params keeper and subspaces
@@ -467,6 +481,7 @@ func NewEvmos(
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[banktypes.StoreKey]),
+		okeys[banktypes.ObjectStoreKey],
 		app.AccountKeeper,
 		app.BlockedAddrs(),
 		authAddr,
@@ -794,8 +809,8 @@ func NewEvmos(
 				[]govclient.ProposalHandler{
 					paramsclient.ProposalHandler,
 					// self proposal types
-					erc20client.RegisterCoinProposalHandler, 
-					erc20client.RegisterERC20ProposalHandler, 
+					erc20client.RegisterCoinProposalHandler,
+					erc20client.RegisterERC20ProposalHandler,
 					erc20client.ToggleTokenConversionProposalHandler,
 				},
 			),
@@ -968,6 +983,19 @@ func NewEvmos(
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedTransferKeeper = scopedTransferKeeper
 
+	if blockSTMEnabled {
+		sdk.SetAddrCacheEnabled(false)
+		workers := cast.ToInt(appOpts.Get(srvflags.EVMBlockSTMWorkers))
+		if workers == 0 {
+			workers = maxParallelism()
+		}
+		preEstimate := cast.ToBool(appOpts.Get(srvflags.EVMBlockSTMPreEstimate))
+		logger.Info("block-stm executor enabled", "workers", workers, "pre-estimate", preEstimate)
+		app.SetTxExecutor(STMTxExecutor(app.GetStoreKeys(), workers, preEstimate, app.EvmKeeper, txConfig.TxDecoder()))
+	} else {
+		app.SetTxExecutor(DefaultTxExecutor)
+	}
+
 	// Finally start the tpsCounter.
 	app.tpsCounter = newTPSCounter(logger)
 	go func() {
@@ -1133,7 +1161,7 @@ func (app *Evmos) AppCodec() codec.Codec {
 }
 
 // DefaultGenesis returns a default genesis from the registered AppModuleBasic's.
-func (app *Evmos) DefaultGenesis() evmostypes.GenesisState {
+func (app *Evmos) DefaultGenesis() GenesisState {
 	return app.BasicModuleManager.DefaultGenesis(app.appCodec)
 }
 
@@ -1161,6 +1189,25 @@ func (app *Evmos) GetTKey(storeKey string) *storetypes.TransientStoreKey {
 // NOTE: This is solely used for testing purposes.
 func (app *Evmos) GetMemKey(storeKey string) *storetypes.MemoryStoreKey {
 	return app.memKeys[storeKey]
+}
+
+// GetStoreKeys returns all the stored store keys.
+func (app *Evmos) GetStoreKeys() []storetypes.StoreKey {
+	keys := make([]storetypes.StoreKey, 0, len(app.keys)+len(app.tkeys)+len(app.okeys)+len(app.memKeys))
+	for _, key := range app.keys {
+		keys = append(keys, key)
+	}
+	for _, key := range app.tkeys {
+		keys = append(keys, key)
+	}
+	for _, key := range app.okeys {
+		keys = append(keys, key)
+	}
+	for _, key := range app.memKeys {
+		keys = append(keys, key)
+	}
+	sort.SliceStable(keys, func(i, j int) bool { return keys[i].Name() < keys[j].Name() })
+	return keys
 }
 
 // GetSubspace returns a param subspace for a given module name.
@@ -1350,4 +1397,8 @@ func (app *Evmos) setupUpgradeHandlers() {
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, storeUpgrades))
 	}
+}
+
+func maxParallelism() int {
+	return min(stdruntime.GOMAXPROCS(0), stdruntime.NumCPU())
 }

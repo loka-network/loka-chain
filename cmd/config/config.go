@@ -77,11 +77,11 @@ func RegisterDenoms() {
 		panic(err)
 	}
 
-	if err := sdk.RegisterFeeDenom(DisplayETHDenom, math.LegacyOneDec()); err != nil {
-		panic(err)
-	}
+	// if err := sdk.RegisterFeeDenom(DisplayETHDenom, math.LegacyOneDec()); err != nil {
+	// 	panic(err)
+	// }
 
-	if err := sdk.RegisterFeeDenom(BaseETHDenom, math.LegacyNewDecWithPrec(1, types.BaseDenomUnit)); err != nil {
-		panic(err)
-	}
+	// if err := sdk.RegisterFeeDenom(BaseETHDenom, math.LegacyNewDecWithPrec(1, types.BaseDenomUnit)); err != nil {
+	// 	panic(err)
+	// }
 }

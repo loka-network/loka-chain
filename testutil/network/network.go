@@ -65,7 +65,6 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/cosmos/ibc-go/v8/testing/simapp"
 	"github.com/hetu-project/hetu/v1/app"
 	"github.com/hetu-project/hetu/v1/crypto/hd"
 
@@ -97,25 +96,25 @@ type Config struct {
 	InterfaceRegistry codectypes.InterfaceRegistry
 	TxConfig          client.TxConfig
 	AccountRetriever  client.AccountRetriever
-	AppConstructor    AppConstructor      // the ABCI application constructor
-	GenesisState      simapp.GenesisState // custom gensis state to provide
-	TimeoutCommit     time.Duration       // the consensus commitment timeout
-	AccountTokens     math.Int            // the amount of unique validator tokens (e.g. 1000node0)
-	StakingTokens     math.Int            // the amount of tokens each validator has available to stake
-	BondedTokens      math.Int            // the amount of tokens each validator stakes
-	NumValidators     int                 // the total number of validators to create and bond
-	ChainID           string              // the network chain-id
-	BondDenom         string              // the staking bond denomination
-	MinGasPrices      string              // the minimum gas prices each validator will accept
-	PruningStrategy   string              // the pruning strategy each validator will have
-	SigningAlgo       string              // signing algorithm for keys
-	RPCAddress        string              // RPC listen address (including port)
-	JSONRPCAddress    string              // JSON-RPC listen address (including port)
-	APIAddress        string              // REST API listen address (including port)
-	GRPCAddress       string              // GRPC server listen address (including port)
-	EnableTMLogging   bool                // enable Tendermint logging to STDOUT
-	CleanupDir        bool                // remove base temporary directory during cleanup
-	PrintMnemonic     bool                // print the mnemonic of first validator as log output for testing
+	AppConstructor    AppConstructor   // the ABCI application constructor
+	GenesisState      app.GenesisState // custom gensis state to provide
+	TimeoutCommit     time.Duration    // the consensus commitment timeout
+	AccountTokens     math.Int         // the amount of unique validator tokens (e.g. 1000node0)
+	StakingTokens     math.Int         // the amount of tokens each validator has available to stake
+	BondedTokens      math.Int         // the amount of tokens each validator stakes
+	NumValidators     int              // the total number of validators to create and bond
+	ChainID           string           // the network chain-id
+	BondDenom         string           // the staking bond denomination
+	MinGasPrices      string           // the minimum gas prices each validator will accept
+	PruningStrategy   string           // the pruning strategy each validator will have
+	SigningAlgo       string           // signing algorithm for keys
+	RPCAddress        string           // RPC listen address (including port)
+	JSONRPCAddress    string           // JSON-RPC listen address (including port)
+	APIAddress        string           // REST API listen address (including port)
+	GRPCAddress       string           // GRPC server listen address (including port)
+	EnableTMLogging   bool             // enable Tendermint logging to STDOUT
+	CleanupDir        bool             // remove base temporary directory during cleanup
+	PrintMnemonic     bool             // print the mnemonic of first validator as log output for testing
 }
 
 // DefaultConfig returns a sane default configuration suitable for nearly all
@@ -123,7 +122,7 @@ type Config struct {
 func DefaultConfig() Config {
 	encCfg := testutilconfig.MakeConfigForTest(nil)
 	chianID := fmt.Sprintf("hetu_%d-1", tmrand.Int63n(9999999999999)+1)
-	app := app.NewEvmos(
+	app1 := app.NewEvmos(
 		log.NewNopLogger(),
 		dbm.NewMemDB(),
 		nil, true, nil,
@@ -140,7 +139,7 @@ func DefaultConfig() Config {
 		InterfaceRegistry: encCfg.InterfaceRegistry,
 		AccountRetriever:  authtypes.AccountRetriever{},
 		AppConstructor:    NewAppConstructor(chianID),
-		GenesisState:      simapp.GenesisState(app.DefaultGenesis()),
+		GenesisState:      app.GenesisState(app1.DefaultGenesis()),
 		TimeoutCommit:     3 * time.Second,
 		ChainID:           chianID,
 		NumValidators:     4,
