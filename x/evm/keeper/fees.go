@@ -26,6 +26,7 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 
 	"github.com/hetu-project/hetu/v1/x/evm/types"
@@ -69,7 +70,7 @@ func (k *Keeper) DeductTxCostsFromUserBalance(
 	}
 
 	// deduct the full gas cost from the user balance
-	if err := authante.DeductFees(k.bankKeeper, ctx, signerAcc, fees); err != nil {
+	if err := DeductFees(k.bankKeeper, ctx, signerAcc, fees); err != nil {
 		return errorsmod.Wrapf(err, "failed to deduct full gas cost %s from the user %s balance", fees, from)
 	}
 
@@ -125,4 +126,17 @@ func VerifyFee(
 	}
 
 	return sdk.Coins{{Denom: denom, Amount: sdkmath.NewIntFromBigInt(feeAmt)}}, nil
+}
+
+// DeductFees deducts fees from the given account.
+func DeductFees(bankKeeper types.BankKeeper, ctx sdk.Context, acc sdk.AccountI, fees sdk.Coins) error {
+	if !fees.IsValid() {
+		return errorsmod.Wrapf(errortypes.ErrInsufficientFee, "invalid fee amount: %s", fees)
+	}
+	if ctx.BlockHeight() > 0 {
+		if err := bankKeeper.SendCoinsFromAccountToModuleVirtual(ctx, acc.GetAddress(), authtypes.FeeCollectorName, fees); err != nil {
+			return errorsmod.Wrap(errortypes.ErrInsufficientFunds, err.Error())
+		}
+	}
+	return nil
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/hetu-project/hetu/v1/x/evm/statedb"
+	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
 )
 
 var (
@@ -17,21 +18,75 @@ var (
 	emptyCodeHash                = crypto.Keccak256(nil)
 )
 
-type MockAcount struct {
+type MockAccount struct {
 	account statedb.Account
 	states  statedb.Storage
 }
 
 type MockKeeper struct {
-	accounts map[common.Address]MockAcount
+	accounts map[common.Address]MockAccount
 	codes    map[common.Hash][]byte
 }
 
 func NewMockKeeper() *MockKeeper {
 	return &MockKeeper{
-		accounts: make(map[common.Address]MockAcount),
+		accounts: make(map[common.Address]MockAccount),
 		codes:    make(map[common.Hash][]byte),
 	}
+}
+
+func (k *MockKeeper) AddBalance(ctx sdk.Context, addr sdk.AccAddress, coins sdk.Coins) error {
+	if common.Address(addr.Bytes()) == errAddress {
+		return errors.New("mock db error")
+	}
+	acct, exists := k.accounts[common.BytesToAddress(addr)]
+	if !exists {
+		return errors.New("account not found")
+	}
+	acct.account.Balance.Add(acct.account.Balance, coins.AmountOf(coins.Denoms()[0]).BigInt())
+	k.accounts[common.BytesToAddress(addr)] = acct
+	return nil
+}
+
+func (k *MockKeeper) SubBalance(ctx sdk.Context, addr sdk.AccAddress, coins sdk.Coins) error {
+	if common.Address(addr.Bytes()) == errAddress {
+		return errors.New("mock db error")
+	}
+	acct, exists := k.accounts[common.BytesToAddress(addr)]
+	if !exists {
+		return errors.New("account not found")
+	}
+	acct.account.Balance.Sub(acct.account.Balance, coins.AmountOf(coins.Denoms()[0]).BigInt())
+	k.accounts[common.BytesToAddress(addr)] = acct
+	return nil
+}
+
+func (k *MockKeeper) Transfer(ctx sdk.Context, sender, recipient sdk.AccAddress, coins sdk.Coins) error {
+	if common.Address(sender.Bytes()) == errAddress || common.Address(recipient.Bytes()) == errAddress {
+		return errors.New("mock db error")
+	}
+	if err := k.SubBalance(ctx, sender, coins); err != nil {
+		return err
+	}
+	return k.AddBalance(ctx, recipient, coins)
+}
+
+func (k *MockKeeper) SetBalance(ctx sdk.Context, addr common.Address, amount *big.Int) error {
+	acct, exists := k.accounts[addr]
+	if !exists {
+		return errors.New("account not found")
+	}
+	acct.account.Balance = new(big.Int).Set(amount)
+	k.accounts[addr] = acct
+	return nil
+}
+
+func (k *MockKeeper) GetBalance(ctx sdk.Context, addr common.Address) *big.Int {
+	acct, exists := k.accounts[addr]
+	if !exists {
+		return big.NewInt(0)
+	}
+	return acct.account.Balance
 }
 
 func (k MockKeeper) GetAccount(_ sdk.Context, addr common.Address) *statedb.Account {
@@ -70,7 +125,7 @@ func (k MockKeeper) SetAccount(_ sdk.Context, addr common.Address, account state
 		acct.account = account
 		k.accounts[addr] = acct
 	} else {
-		k.accounts[addr] = MockAcount{account: account, states: make(statedb.Storage)}
+		k.accounts[addr] = MockAccount{account: account, states: make(statedb.Storage)}
 	}
 	return nil
 }
@@ -102,7 +157,7 @@ func (k MockKeeper) DeleteAccount(_ sdk.Context, addr common.Address) error {
 }
 
 func (k MockKeeper) Clone() *MockKeeper {
-	accounts := make(map[common.Address]MockAcount, len(k.accounts))
+	accounts := make(map[common.Address]MockAccount, len(k.accounts))
 	for k, v := range k.accounts {
 		accounts[k] = v
 	}
@@ -111,4 +166,15 @@ func (k MockKeeper) Clone() *MockKeeper {
 		codes[k] = v
 	}
 	return &MockKeeper{accounts, codes}
+}
+
+func (k *MockKeeper) GetParams(ctx sdk.Context) evmtypes.Params {
+	return evmtypes.Params{
+		EvmDenom:            "ahetu",
+		EnableCreate:        true,
+		EnableCall:          true,
+		ExtraEIPs:           []int64{},
+		ChainConfig:         evmtypes.ChainConfig{},
+		AllowUnprotectedTxs: false,
+	}
 }

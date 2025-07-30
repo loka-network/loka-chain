@@ -22,12 +22,12 @@ require (
 	github.com/cosmos/btcutil v1.0.5
 	github.com/cosmos/cosmos-db v1.1.0
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5
-	github.com/cosmos/cosmos-sdk v0.50.9-hetu
+	github.com/cosmos/cosmos-sdk v0.50.9
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/gogoproto v1.7.0
 	github.com/cosmos/ibc-apps/modules/rate-limiting/v8 v8.0.0
 	github.com/cosmos/ibc-go/modules/capability v1.0.1
-	github.com/cosmos/ibc-go/v8 v8.4.0
+	github.com/cosmos/ibc-go/v8 v8.5.1
 	github.com/cosmos/rosetta v0.50.3-1
 	github.com/crypto-org-chain/go-block-stm v0.0.0-20240919080136-6c49aef68716
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
@@ -266,14 +266,27 @@ require (
 )
 
 replace (
+	cosmossdk.io/store => github.com/crypto-org-chain/cosmos-sdk/store v0.0.0-20241015015202-783e224f9517
+	cosmossdk.io/x/tx => github.com/crypto-org-chain/cosmos-sdk/x/tx v0.0.0-20241015015202-783e224f9517
+	github.com/cometbft/cometbft => github.com/crypto-org-chain/cometbft v0.0.0-20250203071505-1964da4a0cac
+	github.com/cosmos/cosmos-sdk => github.com/crypto-org-chain/cosmos-sdk v0.50.6-0.20241015015202-783e224f9517
+	github.com/cosmos/ibc-go/v8 => github.com/ai-chen2050/ibc-go/v8 v8.0.0-20250729103005-11d7e509b7cb
+	// release/v0.50.x
+	github.com/tidwall/btree => github.com/crypto-org-chain/btree v0.0.0-20240406140148-2687063b042c
+)
+
+replace (
 	// need this replace when importing cosmos/rosetta pkg
 	cosmossdk.io/core => cosmossdk.io/core v0.11.0
 	// need this replace to pick up the store changes (Copy func) in our cosmos-sdk fork
-	cosmossdk.io/store => github.com/hetu-project/cosmos-sdk/store v0.0.0-20240718141609-414cbd051fbe
+	// cosmossdk.io/store => github.com/hetu-project/cosmos-sdk/store v0.0.0-20240718141609-414cbd051fbe
+	// cosmossdk.io/store => github.com/ai-chen2050/cosmos-sdk/store v0.0.0-20250728102616-9defe82c995b
+
 	// use cosmos keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-	github.com/cometbft/cometbft => github.com/hetu-project/hetu-parallel-engine/hetu-cometbft v0.0.0-20250127071645-b3f53d769924
-	github.com/cosmos/cosmos-sdk => github.com/hetu-project/cosmos-sdk v0.50.9-hetu.3
+	// github.com/cometbft/cometbft => github.com/hetu-project/hetu-parallel-engine/hetu-cometbft v0.0.0-20250214085430-cbcce0a00bb2
+	// github.com/cosmos/cosmos-sdk => github.com/ai-chen2050/cosmos-sdk v0.50.9-hetu-stm.1
+	// github.com/cosmos/cosmos-sdk => github.com/hetu-project/cosmos-sdk v0.50.9-hetu.3
 
 	// use geth fork
 	github.com/ethereum/go-ethereum => github.com/hetu-project/go-ethereum v1.10.26-hetu

@@ -85,6 +85,24 @@ func (k *Keeper) ForEachStorage(ctx sdk.Context, addr common.Address, cb func(ke
 	}
 }
 
+func (k *Keeper) Transfer(ctx sdk.Context, sender, recipient sdk.AccAddress, coins sdk.Coins) error {
+	return k.bankKeeper.SendCoins(ctx, sender, recipient, coins)
+}
+
+func (k *Keeper) AddBalance(ctx sdk.Context, addr sdk.AccAddress, coins sdk.Coins) error {
+	if err := k.bankKeeper.MintCoins(ctx, types.ModuleName, coins); err != nil {
+		return err
+	}
+	return k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, addr, coins)
+}
+
+func (k *Keeper) SubBalance(ctx sdk.Context, addr sdk.AccAddress, coins sdk.Coins) error {
+	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, addr, types.ModuleName, coins); err != nil {
+		return err
+	}
+	return k.bankKeeper.BurnCoins(ctx, types.ModuleName, coins)
+}
+
 // SetBalance update account's balance, compare with current balance first, then decide to mint or burn.
 func (k *Keeper) SetBalance(ctx sdk.Context, addr common.Address, amount *big.Int) error {
 	cosmosAddr := sdk.AccAddress(addr.Bytes())
