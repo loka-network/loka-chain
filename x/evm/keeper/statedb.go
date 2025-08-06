@@ -159,16 +159,16 @@ func (k *Keeper) SetAccount(ctx sdk.Context, addr common.Address, account stated
 
 	k.accountKeeper.SetAccount(ctx, acct)
 
-	if err := k.SetBalance(ctx, addr, account.Balance); err != nil {
-		return err
-	}
+	// if err := k.SetBalance(ctx, addr, account.Balance); err != nil {
+	// 	return err
+	// }
 
 	k.Logger(ctx).Debug(
-		"account updated",
+		// "account updated",
 		"ethereum-address", addr.Hex(),
 		"nonce", account.Nonce,
 		"codeHash", codeHash.Hex(),
-		"balance", account.Balance,
+		// "balance", account.Balance,
 	)
 	return nil
 }
@@ -209,7 +209,7 @@ func (k *Keeper) SetCode(ctx sdk.Context, codeHash, code []byte) {
 }
 
 // DeleteAccount handles contract's suicide call:
-// - clear balance
+//// - clear balance
 // - remove code
 // - remove states
 // - remove auth account
@@ -227,9 +227,9 @@ func (k *Keeper) DeleteAccount(ctx sdk.Context, addr common.Address) error {
 	}
 
 	// clear balance
-	if err := k.SetBalance(ctx, addr, new(big.Int)); err != nil {
-		return err
-	}
+	// if err := k.SetBalance(ctx, addr, new(big.Int)); err != nil {
+	// 	return err
+	// }
 
 	// clear storage
 	k.ForEachStorage(ctx, addr, func(key, _ common.Hash) bool {
@@ -241,7 +241,7 @@ func (k *Keeper) DeleteAccount(ctx sdk.Context, addr common.Address) error {
 	k.accountKeeper.RemoveAccount(ctx, acct)
 
 	k.Logger(ctx).Debug(
-		"account suicided",
+		// "account suicided",
 		"ethereum-address", addr.Hex(),
 		"cosmos-address", cosmosAddr.String(),
 	)

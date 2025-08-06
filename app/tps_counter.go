@@ -60,7 +60,7 @@ func newTPSCounter(logger log.Logger) *tpsCounter {
 func (tpc *tpsCounter) incrementSuccess() { atomic.AddUint64(&tpc.nSuccessful, 1) }
 func (tpc *tpsCounter) incrementFailure() { atomic.AddUint64(&tpc.NFailed, 1) }
 
-const defaultTPSReportPeriod = 10 * time.Second
+const defaultTPSReportPeriod = 1 * time.Second
 
 func (tpc *tpsCounter) start(ctx context.Context) error {
 	tpsReportPeriod := defaultTPSReportPeriod

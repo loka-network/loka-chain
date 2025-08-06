@@ -29,6 +29,12 @@ import (
 
 // EVMConfig creates the EVMConfig based on current state
 func (k *Keeper) EVMConfig(ctx sdk.Context, proposerAddress sdk.ConsAddress, chainID *big.Int) (*statedb.EVMConfig, error) {
+	objStore := ctx.ObjectStore(k.objectKey)
+	v := objStore.Get(types.KeyPrefixObjectParams)
+	if v != nil {
+		return v.(*statedb.EVMConfig), nil
+	}
+
 	params := k.GetParams(ctx)
 	ethCfg := params.ChainConfig.EthereumConfig(chainID)
 
@@ -39,12 +45,15 @@ func (k *Keeper) EVMConfig(ctx sdk.Context, proposerAddress sdk.ConsAddress, cha
 	}
 
 	baseFee := k.GetBaseFee(ctx, ethCfg)
-	return &statedb.EVMConfig{
+	cfg := &statedb.EVMConfig{
 		Params:      params,
 		ChainConfig: ethCfg,
 		CoinBase:    coinbase,
 		BaseFee:     baseFee,
-	}, nil
+	}
+	// Store the EVMConfig in the object store for future retrieval
+	objStore.Set(types.KeyPrefixObjectParams, cfg)
+	return cfg, nil
 }
 
 // TxConfig loads `TxConfig` from current transient storage

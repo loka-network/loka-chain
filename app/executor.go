@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"io"
+	"os"
 	"sync"
 	"sync/atomic"
 
@@ -69,6 +70,7 @@ func STMTxExecutor(
 		if blockSize == 0 {
 			return nil, nil
 		}
+		log.NewLogger(os.Stdout).Info("stm tx executor", "block_size", blockSize, "workers", workers, "estimate", estimate)
 		results := make([]*abci.ExecTxResult, blockSize)
 		incarnationCache := make([]atomic.Pointer[map[string]any], blockSize)
 		for i := 0; i < blockSize; i++ {

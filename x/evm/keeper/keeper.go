@@ -47,9 +47,13 @@ type Keeper struct {
 	// Store key required for the EVM Prefix KVStore. It is required by:
 	// - storing account's Storage State
 	// - storing account's Code
-	// - storing transaction Logs
-	// - storing Bloom filters by block height. Needed for the Web3 API.
+	// - storing module parameters
+	//// - storing transaction Logs
+	//// - storing Bloom filters by block height. Needed for the Web3 API.
 	storeKey storetypes.StoreKey
+
+	// key to access the object store, which is reset on every block during Commit
+	objectKey storetypes.StoreKey
 
 	// key to access the transient store, which is reset on every block during Commit
 	transientKey storetypes.StoreKey
@@ -81,7 +85,7 @@ type Keeper struct {
 // NewKeeper generates new evm module keeper
 func NewKeeper(
 	cdc codec.BinaryCodec,
-	storeKey, transientKey storetypes.StoreKey,
+	storeKey, transientKey, objectKey storetypes.StoreKey,
 	authority sdk.AccAddress,
 	ak types.AccountKeeper,
 	bankKeeper types.BankKeeper,
@@ -111,6 +115,7 @@ func NewKeeper(
 		feeMarketKeeper:   fmk,
 		storeKey:          storeKey,
 		transientKey:      transientKey,
+		objectKey:         objectKey,
 		tracer:            tracer,
 		ss:                ss,
 		customContractFns: customContractFns,
@@ -371,19 +376,18 @@ func (k Keeper) ResetTransientGasUsed(ctx sdk.Context) {
 
 // GetTransientGasUsed returns the gas used by current cosmos tx.
 func (k Keeper) GetTransientGasUsed(ctx sdk.Context) uint64 {
-	store := ctx.TransientStore(k.transientKey)
-	bz := store.Get(types.KeyPrefixTransientGasUsed)
-	if len(bz) == 0 {
+	store := ctx.ObjectStore(k.objectKey)
+	v := store.Get(types.ObjectGasUsedKey(ctx.TxIndex()))
+	if v == nil {
 		return 0
 	}
-	return sdk.BigEndianToUint64(bz)
+	return v.(uint64)
 }
 
 // SetTransientGasUsed sets the gas used by current cosmos tx.
 func (k Keeper) SetTransientGasUsed(ctx sdk.Context, gasUsed uint64) {
-	store := ctx.TransientStore(k.transientKey)
-	bz := sdk.Uint64ToBigEndian(gasUsed)
-	store.Set(types.KeyPrefixTransientGasUsed, bz)
+	store := ctx.ObjectStore(k.objectKey)
+	store.Set(types.ObjectGasUsedKey(ctx.TxIndex()), gasUsed)
 }
 
 // AddTransientGasUsed accumulate gas used by each eth msgs included in current cosmos tx.

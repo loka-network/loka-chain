@@ -38,6 +38,9 @@ block-stm-workers = {{ .EVM.BlockSTMWorkers }}
 # BlockSTMPreEstimate is the flag to enable pre-estimation for block-stm execution.
 block-stm-pre-estimate = {{ .EVM.BlockSTMPreEstimate }}
 
+# Enabling async check tx
+async-check-tx = false
+
 ###############################################################################
 ###                           JSON RPC Configuration                        ###
 ###############################################################################

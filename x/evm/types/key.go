@@ -16,7 +16,10 @@
 package types
 
 import (
+	"encoding/binary"
+
 	"github.com/ethereum/go-ethereum/common"
+	ethermint "github.com/hetu-project/hetu/v1/types"
 )
 
 const (
@@ -45,6 +48,7 @@ const (
 	prefixCode = iota + 1
 	prefixStorage
 	prefixParams
+	prefixHeaderHash
 )
 
 // prefix bytes for the EVM transient store
@@ -55,11 +59,19 @@ const (
 	prefixTransientGasUsed
 )
 
+// prefix bytes for the EVM object store
+const (
+	prefixObjectBloom = iota + 1
+	prefixObjectGasUsed
+	prefixObjectParams
+)
+
 // KVStore key prefixes
 var (
 	KeyPrefixCode    = []byte{prefixCode}
 	KeyPrefixStorage = []byte{prefixStorage}
 	KeyPrefixParams  = []byte{prefixParams}
+	KeyPrefixHeaderHash = []byte{prefixHeaderHash}
 )
 
 // Transient Store key prefixes
@@ -70,6 +82,14 @@ var (
 	KeyPrefixTransientGasUsed = []byte{prefixTransientGasUsed}
 )
 
+// Object Store key prefixes
+var (
+	KeyPrefixObjectBloom   = []byte{prefixObjectBloom}
+	KeyPrefixObjectGasUsed = []byte{prefixObjectGasUsed}
+	// cache the `EVMBlockConfig` during the whole block execution
+	KeyPrefixObjectParams = []byte{prefixObjectParams}
+)
+
 // AddressStoragePrefix returns a prefix to iterate over a given account storage.
 func AddressStoragePrefix(address common.Address) []byte {
 	return append(KeyPrefixStorage, address.Bytes()...)
@@ -78,4 +98,44 @@ func AddressStoragePrefix(address common.Address) []byte {
 // StateKey defines the full key under which an account state is stored.
 func StateKey(address common.Address, key []byte) []byte {
 	return append(AddressStoragePrefix(address), key...)
+}
+
+func ObjectGasUsedKey(txIndex int) []byte {
+	var key [1 + 8]byte
+	key[0] = prefixObjectGasUsed
+	if txIndex < 0 {
+		return key[:]
+	}
+	idx, err := ethermint.SafeIntToUint64(txIndex)
+	if err != nil {
+		panic(err)
+	}
+	binary.BigEndian.PutUint64(key[1:], idx)
+	return key[:]
+}
+
+func ObjectBloomKey(txIndex, msgIndex int) []byte {
+	var key [1 + 8 + 8]byte
+	key[0] = prefixObjectBloom
+	if txIndex < 0 || msgIndex < 0 {
+		return key[:]
+	}
+	value, err := ethermint.SafeIntToUint64(txIndex)
+	if err != nil {
+		panic(err)
+	}
+	binary.BigEndian.PutUint64(key[1:], value)
+	value, err = ethermint.SafeIntToUint64(msgIndex)
+	if err != nil {
+		panic(err)
+	}
+	binary.BigEndian.PutUint64(key[9:], value)
+	return key[:]
+}
+
+func GetHeaderHashKey(height uint64) []byte {
+	var key [1 + 8]byte
+	key[0] = prefixHeaderHash
+	binary.BigEndian.PutUint64(key[1:], height)
+	return key[:]
 }
