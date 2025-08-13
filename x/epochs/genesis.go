@@ -21,8 +21,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/hetu-project/hetu/v1/x/epochs/keeper"
-	"github.com/hetu-project/hetu/v1/x/epochs/types"
+	"github.com/loka-network/loka/v1/x/epochs/keeper"
+	"github.com/loka-network/loka/v1/x/epochs/types"
 )
 
 // InitGenesis initializes the epochs module's state from a provided genesis

@@ -10,10 +10,10 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/hetu-project/hetu/v1/rpc/backend/mocks"
-	rpctypes "github.com/hetu-project/hetu/v1/rpc/types"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/rpc/backend/mocks"
+	rpctypes "github.com/loka-network/loka/v1/rpc/types"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 	"google.golang.org/grpc/metadata"
 )
 

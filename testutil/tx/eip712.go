@@ -29,10 +29,10 @@ import (
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/hetu-project/hetu/v1/app"
-	cryptocodec "github.com/hetu-project/hetu/v1/crypto/codec"
-	"github.com/hetu-project/hetu/v1/ethereum/eip712"
-	"github.com/hetu-project/hetu/v1/types"
+	"github.com/loka-network/loka/v1/app"
+	cryptocodec "github.com/loka-network/loka/v1/crypto/codec"
+	"github.com/loka-network/loka/v1/ethereum/eip712"
+	"github.com/loka-network/loka/v1/types"
 )
 
 type EIP712TxArgs struct {

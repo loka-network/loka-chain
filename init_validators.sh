@@ -25,14 +25,14 @@ echo "All validator IPs: ${VALIDATOR_IPS[@]}"
 echo "Number of validators: $NUM_VALIDATORS"
 
 # Configuration
-CHAIN_ID="hetu_560000-1"
+CHAIN_ID="loka_567000-1"
 KEYRING="test"
 KEYALGO="eth_secp256k1"
-DENOM="ahetu"
-HOME_PREFIX="/data/hetud"
+DENOM="aloka"
+HOME_PREFIX="/data/lokad"
 # Set balance and stake amounts (matching local_node.sh exactly)
-GENESIS_BALANCE="1000000000000000000000000000" # 1 million hetu
-GENTX_STAKE="1000000000000000000000000"        # 1 million hetu (1000000000000000000000000 = 10^24)
+GENESIS_BALANCE="1000000000000000000000000000" # 1 million loka
+GENTX_STAKE="1000000000000000000000000"        # 1 million loka (1000000000000000000000000 = 10^24)
 BASEFEE=1000000000
 
 # Port configuration
@@ -47,8 +47,8 @@ WS_PORT=8546
 # Clean up all existing data locally and remotely
 echo "Cleaning up all existing data..."
 
-# Stop any running hetu processes locally
-pkill hetud || true
+# Stop any running loka processes locally
+pkill lokad || true
 
 # Clean local node data
 rm -rf "${HOME_PREFIX}"/*
@@ -66,12 +66,12 @@ for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
         continue
     fi
     echo "Cleaning up data on $TARGET_IP..."
-    ssh ubuntu@${TARGET_IP} "pkill hetud || true; rm -rf \"${HOME_PREFIX}\" \"${HOME_PREFIX}\"* 2>/dev/null || true"
+    ssh ubuntu@${TARGET_IP} "pkill lokad || true; rm -rf \"${HOME_PREFIX}\" \"${HOME_PREFIX}\"* 2>/dev/null || true"
 done
 
 # Initialize primary node
 echo "Initializing primary node..."
-hetud init "node0" -o --chain-id="${CHAIN_ID}" --home "${HOME_PREFIX}"
+lokad init "node0" -o --chain-id="${CHAIN_ID}" --home "${HOME_PREFIX}"
 
 # Path variables
 GENESIS="${HOME_PREFIX}/config/genesis.json"
@@ -82,18 +82,18 @@ declare -a KEYS
 for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
     KEYS[$i]="validator$i"
     echo "Creating validator key ${KEYS[$i]}..."
-    hetud keys add "${KEYS[$i]}" \
+    lokad keys add "${KEYS[$i]}" \
         --keyring-backend="${KEYRING}" \
         --algo="${KEYALGO}" \
         --home "${HOME_PREFIX}"
 
     echo "Adding genesis account for validator ${KEYS[$i]}..."
-    hetud add-genesis-account "${KEYS[$i]}" "${GENESIS_BALANCE}${DENOM},${GENESIS_BALANCE}gas" \
+    lokad add-genesis-account "${KEYS[$i]}" "${GENESIS_BALANCE}${DENOM},${GENESIS_BALANCE}gas" \
         --keyring-backend="${KEYRING}" \
         --home "${HOME_PREFIX}"
 done
 
-# Change parameter token denominations to ahetu
+# Change parameter token denominations to aloka
 jq --arg denom "$DENOM" '.app_state["staking"]["params"]["bond_denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 jq --arg denom "$DENOM" '.app_state["gov"]["params"]["min_deposit"][0]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 jq --arg denom "$DENOM" '.app_state["gov"]["params"]["min_deposit"][0]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
@@ -109,7 +109,7 @@ jq -r --arg current_date "$current_date" '.app_state["claims"]["params"]["airdro
 # Set claims records for validator account
 amount_to_claim=10000
 claims_key="validator0"
-node_address=$(hetud keys show "$claims_key" --keyring-backend $KEYRING --home "$HOME_PREFIX" | grep "address" | cut -c12-)
+node_address=$(lokad keys show "$claims_key" --keyring-backend $KEYRING --home "$HOME_PREFIX" | grep "address" | cut -c12-)
 jq -r --arg node_address "$node_address" --arg amount_to_claim "$amount_to_claim" '.app_state["claims"]["claims_records"]=[{"initial_claimable_amount":$amount_to_claim, "actions_completed":[false, false, false, false],"address":$node_address}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 # Set claims decay
@@ -117,8 +117,8 @@ jq '.app_state["claims"]["params"]["duration_of_decay"]="1000000s"' "$GENESIS" >
 jq '.app_state["claims"]["params"]["duration_until_decay"]="100000s"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 # Claim module account:
-# 0xA61808Fe40fEb8B3433778BBC2ecECCAA47c8c47 || hetu15cvq3ljql6utxseh0zau9m8ve2j8erz89c94rj
-jq -r --arg amount_to_claim "$amount_to_claim" '.app_state["bank"]["balances"] += [{"address":"hetu15cvq3ljql6utxseh0zau9m8ve2j8erz89c94rj","coins":[{"denom":"ahetu", "amount":$amount_to_claim}, {"denom":"gas", "amount":$amount_to_claim}]}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+# 0xA61808Fe40fEb8B3433778BBC2ecECCAA47c8c47 || loka15cvq3ljql6utxseh0zau9m8ve2j8erz8xrvsjp
+jq -r --arg amount_to_claim "$amount_to_claim" '.app_state["bank"]["balances"] += [{"address":"loka15cvq3ljql6utxseh0zau9m8ve2j8erz8xrvsjp","coins":[{"denom":"aloka", "amount":$amount_to_claim}, {"denom":"gas", "amount":$amount_to_claim}]}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 # Change proposal periods to pass within a reasonable time
 sed -i.bak 's/"max_deposit_period": "172800s"/"max_deposit_period": "30s"/g' "$GENESIS"
@@ -141,10 +141,10 @@ for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
 
     # Initialize fresh node
     rm -rf "${CLONE_HOME}"
-    hetud init "node$i" --chain-id="${CHAIN_ID}" --home "${CLONE_HOME}" >/dev/null 2>&1
+    lokad init "node$i" --chain-id="${CHAIN_ID}" --home "${CLONE_HOME}" >/dev/null 2>&1
 
     # Get and store node ID early
-    NODE_IDS[$i]=$(hetud tendermint show-node-id --home "${CLONE_HOME}")
+    NODE_IDS[$i]=$(lokad tendermint show-node-id --home "${CLONE_HOME}")
     echo "Node $i ID: ${NODE_IDS[$i]}"
 
     # Copy necessary files from primary node
@@ -205,7 +205,7 @@ for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
     PUBLIC_IP=${VALIDATOR_IPS[$i]}
 
     # Create gentx
-    hetud gentx "validator$i" \
+    lokad gentx "validator$i" \
         "${GENTX_STAKE}${DENOM}" \
         --chain-id="${CHAIN_ID}" \
         --moniker="node$i" \
@@ -229,11 +229,11 @@ done
 
 # Collect gentxs
 echo "Collecting gentxs..."
-hetud collect-gentxs --home "${HOME_PREFIX}"
+lokad collect-gentxs --home "${HOME_PREFIX}"
 
 # Validate genesis
 echo "Validating genesis..."
-hetud validate-genesis --home "${HOME_PREFIX}"
+lokad validate-genesis --home "${HOME_PREFIX}"
 
 # Configure peers for each validator
 for i in $(seq 0 $((NUM_VALIDATORS - 1))); do

@@ -6,9 +6,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/hetu-project/hetu/v1/testutil"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	"github.com/hetu-project/hetu/v1/x/vesting/types"
+	"github.com/loka-network/loka/v1/testutil"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/x/vesting/types"
 )
 
 func (suite *KeeperTestSuite) TestBalances() {
@@ -34,7 +34,7 @@ func (suite *KeeperTestSuite) TestBalances() {
 			"invalid address",
 			func() {
 				req = &types.QueryBalancesRequest{
-					Address: "hetu1",
+					Address: "loka1",
 				}
 			},
 			false,

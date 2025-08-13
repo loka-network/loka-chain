@@ -28,7 +28,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/core"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	feemarkettypes "github.com/hetu-project/hetu/v1/x/feemarket/types"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
 )
 
 // AccountKeeper defines the expected account keeper interface

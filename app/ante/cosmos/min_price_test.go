@@ -5,10 +5,10 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	cosmosante "github.com/hetu-project/hetu/v1/app/ante/cosmos"
-	"github.com/hetu-project/hetu/v1/testutil"
-	testutiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	"github.com/hetu-project/hetu/v1/utils"
+	cosmosante "github.com/loka-network/loka/v1/app/ante/cosmos"
+	"github.com/loka-network/loka/v1/testutil"
+	testutiltx "github.com/loka-network/loka/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/utils"
 )
 
 var execTypes = []struct {
@@ -23,8 +23,8 @@ var execTypes = []struct {
 func (suite *AnteTestSuite) TestMinGasPriceDecorator() {
 	denom := utils.BaseDenom
 	testMsg := banktypes.MsgSend{
-		FromAddress: "hetu1x8fhpj9nmhqk8z9kpgjt95ck2xwyue0pucafnk",
-		ToAddress:   "hetu1dx67l23hz9l0k9hcher8xz04uj7wf3yuaq5l0y",
+		FromAddress: "loka1x8fhpj9nmhqk8z9kpgjt95ck2xwyue0pg6wzuz",
+		ToAddress:   "loka1dx67l23hz9l0k9hcher8xz04uj7wf3yufz85qs",
 		Amount:      sdk.Coins{sdk.Coin{Amount: sdkmath.NewInt(10), Denom: denom}},
 	}
 

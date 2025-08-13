@@ -25,9 +25,9 @@ import (
 	"cosmossdk.io/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	evmostypes "github.com/hetu-project/hetu/v1/types"
+	evmostypes "github.com/loka-network/loka/v1/types"
 
-	"github.com/hetu-project/hetu/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/x/erc20/types"
 )
 
 var _ types.QueryServer = Keeper{}

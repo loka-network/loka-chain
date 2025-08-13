@@ -34,9 +34,9 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	"github.com/hetu-project/hetu/v1/x/inflation/client/cli"
-	"github.com/hetu-project/hetu/v1/x/inflation/keeper"
-	"github.com/hetu-project/hetu/v1/x/inflation/types"
+	"github.com/loka-network/loka/v1/x/inflation/client/cli"
+	"github.com/loka-network/loka/v1/x/inflation/keeper"
+	"github.com/loka-network/loka/v1/x/inflation/types"
 )
 
 // type check to ensure the interface is properly implemented

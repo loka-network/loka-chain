@@ -26,9 +26,9 @@ import (
 	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
-	evmostypes "github.com/hetu-project/hetu/v1/types"
-	"github.com/hetu-project/hetu/v1/x/evm/statedb"
-	"github.com/hetu-project/hetu/v1/x/evm/types"
+	evmostypes "github.com/loka-network/loka/v1/types"
+	"github.com/loka-network/loka/v1/x/evm/statedb"
+	"github.com/loka-network/loka/v1/x/evm/types"
 )
 
 var _ statedb.Keeper = &Keeper{}

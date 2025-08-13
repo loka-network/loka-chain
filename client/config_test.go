@@ -31,7 +31,7 @@ func TestInitConfigNonNotExistError(t *testing.T) {
 
 func TestDecodeBen32AndReplace(t *testing.T) {
 	originalAddress := "hhub15cvq3ljql6utxseh0zau9m8ve2j8erz8jplma4"
-	newPrefix := "hetu"
+	newPrefix := "loka"
 
 	hrp, decoded, err := bech32.Decode(originalAddress, 64)
 	if err != nil {

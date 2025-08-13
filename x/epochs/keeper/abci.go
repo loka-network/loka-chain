@@ -23,7 +23,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/hetu-project/hetu/v1/x/epochs/types"
+	"github.com/loka-network/loka/v1/x/epochs/types"
 )
 
 // BeginBlocker of epochs module

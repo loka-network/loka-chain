@@ -28,9 +28,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/testutil/tx"
 )
 
 // Commit commits a block at a given time. Reminder: At the end of each

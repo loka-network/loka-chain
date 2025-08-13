@@ -28,8 +28,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 
-	"github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/utils"
+	"github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/utils"
 )
 
 var (
@@ -43,7 +43,7 @@ type CosmosTxArgs struct {
 	TxCfg client.TxConfig
 	// Priv is the private key that will be used to sign the tx
 	Priv cryptotypes.PrivKey
-	// ChainID is the chain's id on cosmos format, e.g. 'hetu_560000-1'
+	// ChainID is the chain's id on cosmos format, e.g. 'loka_567000-1'
 	ChainID string
 	// Gas to be used on the tx
 	Gas uint64

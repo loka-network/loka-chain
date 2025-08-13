@@ -13,9 +13,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 
-	cryptocodec "github.com/hetu-project/hetu/v1/crypto/codec"
-	enccodec "github.com/hetu-project/hetu/v1/encoding/codec"
-	hetutypes "github.com/hetu-project/hetu/v1/types"
+	cryptocodec "github.com/loka-network/loka/v1/crypto/codec"
+	enccodec "github.com/loka-network/loka/v1/encoding/codec"
+	lokatypes "github.com/loka-network/loka/v1/types"
 )
 
 var TestCodec amino.Codec
@@ -41,7 +41,7 @@ const (
 func TestKeyring(t *testing.T) {
 	dir := t.TempDir()
 	mockIn := strings.NewReader("")
-	kr, err := keyring.New("hetu", keyring.BackendTest, dir, mockIn, TestCodec, EthSecp256k1Option())
+	kr, err := keyring.New("loka", keyring.BackendTest, dir, mockIn, TestCodec, EthSecp256k1Option())
 	require.NoError(t, err)
 
 	// fail in retrieving key
@@ -50,7 +50,7 @@ func TestKeyring(t *testing.T) {
 	require.Nil(t, info)
 
 	mockIn.Reset("password\npassword\n")
-	info, mnemonic, err := kr.NewMnemonic("foo", keyring.English, hetutypes.BIP44HDPath, keyring.DefaultBIP39Passphrase, EthSecp256k1)
+	info, mnemonic, err := kr.NewMnemonic("foo", keyring.English, lokatypes.BIP44HDPath, keyring.DefaultBIP39Passphrase, EthSecp256k1)
 	require.NoError(t, err)
 	require.NotEmpty(t, mnemonic)
 	require.Equal(t, "foo", info.Name)
@@ -59,7 +59,7 @@ func TestKeyring(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, string(EthSecp256k1Type), pubKey.Type())
 
-	hdPath := hetutypes.BIP44HDPath
+	hdPath := lokatypes.BIP44HDPath
 
 	bz, err := EthSecp256k1.Derive()(mnemonic, keyring.DefaultBIP39Passphrase, hdPath)
 	require.NoError(t, err)
@@ -85,7 +85,7 @@ func TestKeyring(t *testing.T) {
 }
 
 func TestDerivation(t *testing.T) {
-	bz, err := EthSecp256k1.Derive()(mnemonic, keyring.DefaultBIP39Passphrase, hetutypes.BIP44HDPath)
+	bz, err := EthSecp256k1.Derive()(mnemonic, keyring.DefaultBIP39Passphrase, lokatypes.BIP44HDPath)
 	require.NoError(t, err)
 	require.NotEmpty(t, bz)
 
@@ -103,7 +103,7 @@ func TestDerivation(t *testing.T) {
 	wallet, err := NewFromMnemonic(mnemonic)
 	require.NoError(t, err)
 
-	path := MustParseDerivationPath(hetutypes.BIP44HDPath)
+	path := MustParseDerivationPath(lokatypes.BIP44HDPath)
 	account, err := wallet.Derive(path, false)
 	require.NoError(t, err)
 

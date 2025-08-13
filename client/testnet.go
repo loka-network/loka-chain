@@ -55,13 +55,13 @@ import (
 	mintypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/hetu-project/hetu/v1/crypto/hd"
-	"github.com/hetu-project/hetu/v1/server/config"
-	srvflags "github.com/hetu-project/hetu/v1/server/flags"
-	evmostypes "github.com/hetu-project/hetu/v1/types"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/crypto/hd"
+	"github.com/loka-network/loka/v1/server/config"
+	srvflags "github.com/loka-network/loka/v1/server/flags"
+	evmostypes "github.com/loka-network/loka/v1/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 
-	"github.com/hetu-project/hetu/v1/testutil/network"
+	"github.com/loka-network/loka/v1/testutil/network"
 )
 
 var (
@@ -144,7 +144,7 @@ or a similar setup where each node has a manually configurable IP address.
 Note, strict routability for addresses is turned off in the config file.
 
 Example:
-	hetud testnet init-files --v 4 --output-dir ./.testnets --starting-ip-address 192.168.10.2
+	lokad testnet init-files --v 4 --output-dir ./.testnets --starting-ip-address 192.168.10.2
 	`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -190,7 +190,7 @@ and generate "v" directories, populated with necessary validator configuration f
 (private validator, genesis, config, etc.).
 
 Example:
-	hetud testnet --v 4 --output-dir ./.testnets
+	lokad testnet --v 4 --output-dir ./.testnets
 	`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			args := startArgs{}

@@ -37,8 +37,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/utils"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/utils"
 )
 
 // EthDefaultConsensusParams defines the default Tendermint consensus params used in
@@ -92,7 +92,7 @@ func EthSetupWithDB(isCheckTx bool, patchGenesis func(*Evmos, GenesisState) Gene
 		// Initialize the chain
 		app.InitChain(
 			&abci.RequestInitChain{
-				ChainId:         "hetu_560000-1",
+				ChainId:         "loka_567000-1",
 				Validators:      []abci.ValidatorUpdate{},
 				ConsensusParams: DefaultConsensusParams,
 				AppStateBytes:   stateBytes,

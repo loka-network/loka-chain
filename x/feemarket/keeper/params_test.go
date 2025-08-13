@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"reflect"
 
-	"github.com/hetu-project/hetu/v1/x/feemarket/types"
+	"github.com/loka-network/loka/v1/x/feemarket/types"
 )
 
 func (suite *KeeperTestSuite) TestSetGetParams() {

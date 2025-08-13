@@ -13,9 +13,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	"github.com/ethereum/go-ethereum/params"
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/types"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 var _ DynamicFeeEVMKeeper = MockEVMKeeper{}
@@ -37,7 +37,7 @@ func (m MockEVMKeeper) GetParams(_ sdk.Context) evmtypes.Params {
 }
 
 func (m MockEVMKeeper) ChainID() *big.Int {
-	return big.NewInt(560000)
+	return big.NewInt(567000)
 }
 
 func TestSDKTxFeeChecker(t *testing.T) {
@@ -98,7 +98,7 @@ func TestSDKTxFeeChecker(t *testing.T) {
 				txBuilder.SetFeeAmount(sdk.NewCoins(sdk.NewCoin(evmtypes.DefaultEVMDenom, math.NewInt(10))))
 				return txBuilder.GetTx()
 			},
-			"10ahetu",
+			"10aloka",
 			0,
 			true,
 		},
@@ -140,7 +140,7 @@ func TestSDKTxFeeChecker(t *testing.T) {
 				txBuilder.SetFeeAmount(sdk.NewCoins(sdk.NewCoin(evmtypes.DefaultEVMDenom, math.NewInt(10))))
 				return txBuilder.GetTx()
 			},
-			"10ahetu",
+			"10aloka",
 			0,
 			true,
 		},
@@ -156,7 +156,7 @@ func TestSDKTxFeeChecker(t *testing.T) {
 				txBuilder.SetFeeAmount(sdk.NewCoins(sdk.NewCoin(evmtypes.DefaultEVMDenom, math.NewInt(10).Mul(evmtypes.DefaultPriorityReduction).Add(math.NewInt(10)))))
 				return txBuilder.GetTx()
 			},
-			"10000010ahetu",
+			"10000010aloka",
 			10,
 			true,
 		},
@@ -176,7 +176,7 @@ func TestSDKTxFeeChecker(t *testing.T) {
 				txBuilder.SetExtensionOptions(option)
 				return txBuilder.GetTx()
 			},
-			"10ahetu",
+			"10aloka",
 			0,
 			true,
 		},
@@ -198,7 +198,7 @@ func TestSDKTxFeeChecker(t *testing.T) {
 				txBuilder.SetExtensionOptions(option)
 				return txBuilder.GetTx()
 			},
-			"5000010ahetu",
+			"5000010aloka",
 			5,
 			true,
 		},

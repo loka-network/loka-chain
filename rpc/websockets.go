@@ -42,11 +42,11 @@ import (
 	rpcclient "github.com/cometbft/cometbft/rpc/jsonrpc/client"
 	tmtypes "github.com/cometbft/cometbft/types"
 
-	"github.com/hetu-project/hetu/v1/rpc/ethereum/pubsub"
-	rpcfilters "github.com/hetu-project/hetu/v1/rpc/namespaces/ethereum/eth/filters"
-	"github.com/hetu-project/hetu/v1/rpc/types"
-	"github.com/hetu-project/hetu/v1/server/config"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/rpc/ethereum/pubsub"
+	rpcfilters "github.com/loka-network/loka/v1/rpc/namespaces/ethereum/eth/filters"
+	"github.com/loka-network/loka/v1/rpc/types"
+	"github.com/loka-network/loka/v1/server/config"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 type WebsocketsServer interface {
@@ -190,7 +190,8 @@ func (s *websocketsServer) readLoop(wsConn *wsConn) {
 	defer func() {
 		// cancel all subscriptions when connection closed
 		// #nosec G705
-		for _, unsubFn := range subscriptions {
+		for id, unsubFn := range subscriptions {
+			s.logger.Error("unsubscribing from subscription", "id", id)
 			unsubFn()
 		}
 	}()
@@ -266,6 +267,7 @@ func (s *websocketsServer) readLoop(wsConn *wsConn) {
 			}
 
 			if err := wsConn.WriteJSON(res); err != nil {
+				s.logger.Error("error writing subscription response", "error", err.Error())
 				break
 			}
 		case "eth_unsubscribe":
@@ -294,6 +296,7 @@ func (s *websocketsServer) readLoop(wsConn *wsConn) {
 			}
 
 			if err := wsConn.WriteJSON(res); err != nil {
+				s.logger.Error("error writing unsubscription response", "error", err.Error())
 				break
 			}
 		default:
@@ -429,7 +432,7 @@ func (api *pubSubAPI) subscribeNewHeads(wsConn *wsConn, subID rpc.ID) (pubsub.Un
 						Result:       header,
 					},
 				}
-
+				api.logger.Debug("writing header to ws conn", "header", header)
 				err = wsConn.WriteJSON(res)
 				if err != nil {
 					api.logger.Error("error writing header, will drop peer", "error", err.Error())

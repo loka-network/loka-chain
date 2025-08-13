@@ -19,7 +19,7 @@ package types
 import (
 	"cosmossdk.io/math"
 
-	evmostypes "github.com/hetu-project/hetu/v1/types"
+	evmostypes "github.com/loka-network/loka/v1/types"
 )
 
 // CalculateEpochProvisions returns mint provision per epoch
@@ -57,7 +57,7 @@ func CalculateEpochMintProvision(
 
 	// Multiply epochMintProvision with power reduction (10^18 for evmos) as the
 	// calculation is based on `evmos` and the issued tokens need to be given in
-	// `ahetu`
+	// `aloka`
 	epochProvision = epochProvision.Mul(math.LegacyNewDecFromInt(evmostypes.PowerReduction))
 	return epochProvision
 }

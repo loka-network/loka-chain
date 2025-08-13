@@ -6,10 +6,10 @@ import (
 
 	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	"github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/testutil"
-	"github.com/hetu-project/hetu/v1/x/epochs/types"
-	evm "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/testutil"
+	"github.com/loka-network/loka/v1/x/epochs/types"
+	evm "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 // Test helpers
@@ -21,7 +21,7 @@ func (suite *KeeperTestSuite) DoSetupTest() {
 
 	// setup context
 	header := testutil.NewHeader(
-		1, time.Now().UTC(), "hetu_560001-1", suite.consAddress, nil, nil,
+		1, time.Now().UTC(), "loka_567001-1", suite.consAddress, nil, nil,
 	)
 	suite.ctx = suite.app.BaseApp.NewContextLegacy(checkTx, header)
 	suite.ctx = suite.ctx.WithBlockGasMeter(storetypes.NewGasMeter(math.MaxUint64))

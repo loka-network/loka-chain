@@ -22,8 +22,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 
-	"github.com/hetu-project/hetu/v1/x/erc20/keeper"
-	"github.com/hetu-project/hetu/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/x/erc20/keeper"
+	"github.com/loka-network/loka/v1/x/erc20/types"
 )
 
 // InitGenesis import module genesis

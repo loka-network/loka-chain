@@ -27,7 +27,7 @@ import (
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	ibctesting "github.com/cosmos/ibc-go/v8/testing"
-	"github.com/hetu-project/hetu/v1/app"
+	"github.com/loka-network/loka/v1/app"
 	"github.com/stretchr/testify/require"
 )
 

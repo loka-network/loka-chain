@@ -8,8 +8,8 @@ import (
 
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/params"
-	"github.com/hetu-project/hetu/v1/x/evm/statedb"
-	"github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/x/evm/statedb"
+	"github.com/loka-network/loka/v1/x/evm/types"
 )
 
 func (suite *KeeperTestSuite) TestEthereumTx() {

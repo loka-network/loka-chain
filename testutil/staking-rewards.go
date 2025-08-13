@@ -28,9 +28,9 @@ import (
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	teststaking "github.com/cosmos/cosmos-sdk/x/staking/testutil"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/hetu-project/hetu/v1/app"
-	testutiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	"github.com/hetu-project/hetu/v1/utils"
+	"github.com/loka-network/loka/v1/app"
+	testutiltx "github.com/loka-network/loka/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/utils"
 	"github.com/stretchr/testify/require"
 )
 

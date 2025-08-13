@@ -20,10 +20,10 @@ import (
 	auxTx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	"github.com/hetu-project/hetu/v1/wallets/accounts"
-	"github.com/hetu-project/hetu/v1/wallets/ledger"
-	"github.com/hetu-project/hetu/v1/wallets/ledger/mocks"
-	"github.com/hetu-project/hetu/v1/wallets/usbwallet"
+	"github.com/loka-network/loka/v1/wallets/accounts"
+	"github.com/loka-network/loka/v1/wallets/ledger"
+	"github.com/loka-network/loka/v1/wallets/ledger/mocks"
+	"github.com/loka-network/loka/v1/wallets/usbwallet"
 )
 
 type LedgerTestSuite struct {
@@ -82,7 +82,7 @@ func (suite *LedgerTestSuite) getMockTxAmino() []byte {
 	tmp := whitespaceRegex.ReplaceAllString(
 		`{
 			"account_number": "0",
-			"chain_id":"hetu_560000-1",
+			"chain_id":"loka_567000-1",
 			"fee":{
 				"amount":[{"amount":"150","denom":"atom"}],
 				"gas":"20000"
@@ -161,7 +161,7 @@ func (suite *LedgerTestSuite) getMockTxProtobuf() []byte {
 	signBytes, err := auxTx.DirectSignBytes(
 		bodyBytes,
 		authInfoBytes,
-		"hetu_560000-1",
+		"loka_567000-1",
 		0,
 	)
 	suite.Require().NoError(err)

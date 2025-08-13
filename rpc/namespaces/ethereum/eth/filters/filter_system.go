@@ -37,8 +37,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/hetu-project/hetu/v1/rpc/ethereum/pubsub"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/rpc/ethereum/pubsub"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 var (
@@ -300,6 +300,8 @@ func (es *EventSystem) consumeEvents() {
 				// skip empty responses
 				continue
 			}
+
+			es.logger.Debug("consuming cometbft event", "event", ev)
 
 			es.indexMux.RLock()
 			ch, ok := es.topicChans[ev.Query]

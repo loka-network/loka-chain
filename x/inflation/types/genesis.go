@@ -19,7 +19,7 @@ package types
 import (
 	fmt "fmt"
 
-	epochstypes "github.com/hetu-project/hetu/v1/x/epochs/types"
+	epochstypes "github.com/loka-network/loka/v1/x/epochs/types"
 )
 
 // NewGenesisState creates a new GenesisState object

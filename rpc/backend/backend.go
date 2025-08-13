@@ -36,10 +36,10 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
-	rpctypes "github.com/hetu-project/hetu/v1/rpc/types"
-	"github.com/hetu-project/hetu/v1/server/config"
-	evmostypes "github.com/hetu-project/hetu/v1/types"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	rpctypes "github.com/loka-network/loka/v1/rpc/types"
+	"github.com/loka-network/loka/v1/server/config"
+	evmostypes "github.com/loka-network/loka/v1/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 // BackendI implements the Cosmos and EVM backend.

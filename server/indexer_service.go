@@ -25,7 +25,7 @@ import (
 	ctypes "github.com/cometbft/cometbft/rpc/core/types"
 	"github.com/cometbft/cometbft/types"
 
-	evmostypes "github.com/hetu-project/hetu/v1/types"
+	evmostypes "github.com/loka-network/loka/v1/types"
 )
 
 const (

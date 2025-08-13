@@ -13,10 +13,10 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/hetu-project/hetu/v1/x/erc20/keeper"
-	"github.com/hetu-project/hetu/v1/x/erc20/types"
-	"github.com/hetu-project/hetu/v1/x/evm/statedb"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/x/erc20/keeper"
+	"github.com/loka-network/loka/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/x/evm/statedb"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 func (suite *KeeperTestSuite) TestConvertCoinNativeCoin() {

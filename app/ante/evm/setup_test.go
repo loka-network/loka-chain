@@ -15,13 +15,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/hetu-project/hetu/v1/app"
-	ante "github.com/hetu-project/hetu/v1/app/ante"
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/ethereum/eip712"
-	"github.com/hetu-project/hetu/v1/utils"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
-	feemarkettypes "github.com/hetu-project/hetu/v1/x/feemarket/types"
+	"github.com/loka-network/loka/v1/app"
+	ante "github.com/loka-network/loka/v1/app/ante"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/ethereum/eip712"
+	"github.com/loka-network/loka/v1/utils"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
 )
 
 type AnteTestSuite struct {

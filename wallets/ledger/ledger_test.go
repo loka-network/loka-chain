@@ -6,10 +6,10 @@ import (
 	gethaccounts "github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/ethereum/eip712"
-	"github.com/hetu-project/hetu/v1/wallets/accounts"
-	"github.com/hetu-project/hetu/v1/wallets/ledger"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/ethereum/eip712"
+	"github.com/loka-network/loka/v1/wallets/accounts"
+	"github.com/loka-network/loka/v1/wallets/ledger"
 )
 
 // Test Mnemonic:

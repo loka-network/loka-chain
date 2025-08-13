@@ -5,10 +5,10 @@ import (
 	"math/big"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	evmostypes "github.com/hetu-project/hetu/v1/types"
-	"github.com/hetu-project/hetu/v1/x/evm/keeper"
-	"github.com/hetu-project/hetu/v1/x/evm/statedb"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	evmostypes "github.com/loka-network/loka/v1/types"
+	"github.com/loka-network/loka/v1/x/evm/keeper"
+	"github.com/loka-network/loka/v1/x/evm/statedb"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -34,14 +34,14 @@ func (suite *KeeperTestSuite) TestWithChainID() {
 		},
 		{
 			"success - Evmos mainnet chain ID",
-			"hetu_560001-2",
-			560001,
+			"loka_567001-2",
+			567001,
 			false,
 		},
 		{
 			"success - Evmos testnet chain ID",
-			"hetu_560000-4",
-			560000,
+			"loka_567000-4",
+			567000,
 			false,
 		},
 	}

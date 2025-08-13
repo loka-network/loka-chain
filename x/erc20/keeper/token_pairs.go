@@ -22,7 +22,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/hetu-project/hetu/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/x/erc20/types"
 )
 
 // GetTokenPairs - get all registered token tokenPairs

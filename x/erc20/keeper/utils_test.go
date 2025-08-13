@@ -22,20 +22,20 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/contracts"
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
-	ibctesting "github.com/hetu-project/hetu/v1/ibc/testing"
-	"github.com/hetu-project/hetu/v1/server/config"
-	"github.com/hetu-project/hetu/v1/testutil"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	teststypes "github.com/hetu-project/hetu/v1/types/tests"
-	"github.com/hetu-project/hetu/v1/utils"
-	"github.com/hetu-project/hetu/v1/x/erc20/types"
-	"github.com/hetu-project/hetu/v1/x/evm/statedb"
-	evm "github.com/hetu-project/hetu/v1/x/evm/types"
-	feemarkettypes "github.com/hetu-project/hetu/v1/x/feemarket/types"
-	inflationtypes "github.com/hetu-project/hetu/v1/x/inflation/types"
+	"github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/contracts"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	ibctesting "github.com/loka-network/loka/v1/ibc/testing"
+	"github.com/loka-network/loka/v1/server/config"
+	"github.com/loka-network/loka/v1/testutil"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	teststypes "github.com/loka-network/loka/v1/types/tests"
+	"github.com/loka-network/loka/v1/utils"
+	"github.com/loka-network/loka/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/x/evm/statedb"
+	evm "github.com/loka-network/loka/v1/x/evm/types"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
+	inflationtypes "github.com/loka-network/loka/v1/x/inflation/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -75,7 +75,7 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 	// init app
 	suite.app = app.Setup(false, feemarkettypes.DefaultGenesisState())
 	header := testutil.NewHeader(
-		1, time.Now().UTC(), "hetu_560001-1", consAddress, nil, nil,
+		1, time.Now().UTC(), "loka_567001-1", consAddress, nil, nil,
 	)
 	suite.ctx = suite.app.BaseApp.NewContextLegacy(false, header)
 	suite.ctx = suite.ctx.WithBlockGasMeter(storetypes.NewGasMeter(math.MaxUint64))
@@ -186,7 +186,7 @@ func (suite *KeeperTestSuite) SetupIBCTest() {
 	err = s.app.BankKeeper.MintCoins(s.EvmosChain.GetContext(), types.ModuleName, coins)
 	s.Require().NoError(err)
 
-	// Mint coins on the osmosis side which we'll use to unlock our ahetu
+	// Mint coins on the osmosis side which we'll use to unlock our aloka
 	coinOsmo := sdk.NewCoin("uosmo", sdkmath.NewInt(10000000))
 	coins = sdk.NewCoins(coinOsmo)
 	err = suite.IBCOsmosisChain.GetSimApp().BankKeeper.MintCoins(suite.IBCOsmosisChain.GetContext(), minttypes.ModuleName, coins)
@@ -194,7 +194,7 @@ func (suite *KeeperTestSuite) SetupIBCTest() {
 	err = suite.IBCOsmosisChain.GetSimApp().BankKeeper.SendCoinsFromModuleToAccount(suite.IBCOsmosisChain.GetContext(), minttypes.ModuleName, suite.IBCOsmosisChain.SenderAccount.GetAddress(), coins)
 	suite.Require().NoError(err)
 
-	// Mint coins on the cosmos side which we'll use to unlock our ahetu
+	// Mint coins on the cosmos side which we'll use to unlock our aloka
 	coinAtom := sdk.NewCoin("uatom", sdkmath.NewInt(10))
 	coins = sdk.NewCoins(coinAtom)
 	err = suite.IBCCosmosChain.GetSimApp().BankKeeper.MintCoins(suite.IBCCosmosChain.GetContext(), minttypes.ModuleName, coins)
@@ -398,7 +398,7 @@ func (suite *KeeperTestSuite) SendAndReceiveMessage(path *ibctesting.Path, origi
 	suite.sendAndReceiveMessage(path, path.EndpointA, path.EndpointB, origin, coin, amount, sender, receiver, seq, ibcCoinMetadata)
 }
 
-// Send back coins (from path endpoint B to A). In case of IBC coins need to provide ibcCoinMetadata (<port>/<channel>/<denom>, e.g.: "transfer/channel-0/ahetu") as input parameter.
+// Send back coins (from path endpoint B to A). In case of IBC coins need to provide ibcCoinMetadata (<port>/<channel>/<denom>, e.g.: "transfer/channel-0/aloka") as input parameter.
 // We need this to instantiate properly a FungibleTokenPacketData https://github.com/cosmos/ibc-go/blob/main/docs/architecture/adr-001-coin-source-tracing.md
 func (suite *KeeperTestSuite) SendBackCoins(path *ibctesting.Path, origin *ibcgotesting.TestChain, coin string, amount int64, sender, receiver string, seq uint64, ibcCoinMetadata string) {
 	// Send coin from B to A

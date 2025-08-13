@@ -25,9 +25,9 @@ import (
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/params"
 
-	"github.com/hetu-project/hetu/v1/x/evm/statedb"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
-	feemarkettypes "github.com/hetu-project/hetu/v1/x/feemarket/types"
+	"github.com/loka-network/loka/v1/x/evm/statedb"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
 )
 
 // EVMKeeper defines the expected keeper interface used on the AnteHandler

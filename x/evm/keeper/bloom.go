@@ -6,7 +6,7 @@ import (
 	"cosmossdk.io/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/x/evm/types"
 )
 
 func (k Keeper) SetTxBloom(ctx sdk.Context, bloom *big.Int) {

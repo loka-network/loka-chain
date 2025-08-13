@@ -14,13 +14,13 @@ import (
 	tmversion "github.com/cometbft/cometbft/proto/tendermint/version"
 	"github.com/cometbft/cometbft/version"
 
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	"github.com/hetu-project/hetu/v1/utils"
-	feemarkettypes "github.com/hetu-project/hetu/v1/x/feemarket/types"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/utils"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
 
-	"github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/x/erc20"
-	"github.com/hetu-project/hetu/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/x/erc20"
+	"github.com/loka-network/loka/v1/x/erc20/types"
 )
 
 type GenesisTestSuite struct {

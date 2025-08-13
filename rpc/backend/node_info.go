@@ -35,11 +35,11 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
-	rpctypes "github.com/hetu-project/hetu/v1/rpc/types"
-	"github.com/hetu-project/hetu/v1/server/config"
-	"github.com/hetu-project/hetu/v1/types"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	rpctypes "github.com/loka-network/loka/v1/rpc/types"
+	"github.com/loka-network/loka/v1/server/config"
+	"github.com/loka-network/loka/v1/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 // Accounts returns the list of accounts available to this node.

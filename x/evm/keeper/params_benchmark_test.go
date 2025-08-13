@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"testing"
 
-	"github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/x/evm/types"
 )
 
 func BenchmarkSetParams(b *testing.B) {

@@ -100,9 +100,9 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 
 			// Set default seeds
 			seeds := []string{
-				// "40f4fac63da8b1ce8f850b0fa0f79b2699d2ce72@seed.hetu.jerrychong.com:26656",                 // jerrychong
-				// "e3e11fca4ecf4035a751f3fea90e3a821e274487@bd-hetu-mainnet-seed-node-01.bdnodes.net:26656", // blockdaemon
-				// "fc86e7e75c5d2e4699535e1b1bec98ae55b16826@bd-hetu-mainnet-seed-node-02.bdnodes.net:26656", // blockdaemon
+				// "40f4fac63da8b1ce8f850b0fa0f79b2699d2ce72@seed.loka.jerrychong.com:26656",                 // jerrychong
+				// "e3e11fca4ecf4035a751f3fea90e3a821e274487@bd-loka-mainnet-seed-node-01.bdnodes.net:26656", // blockdaemon
+				// "fc86e7e75c5d2e4699535e1b1bec98ae55b16826@bd-loka-mainnet-seed-node-02.bdnodes.net:26656", // blockdaemon
 			}
 			config.P2P.Seeds = strings.Join(seeds, ",")
 
@@ -113,7 +113,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 
 			chainID, _ := cmd.Flags().GetString(flags.FlagChainID)
 			if chainID == "" {
-				chainID = fmt.Sprintf("hetu_560000-%v", tmrand.Str(6))
+				chainID = fmt.Sprintf("loka_567000-%v", tmrand.Str(6))
 			}
 
 			// Get bip39 mnemonic

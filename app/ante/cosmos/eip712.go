@@ -33,11 +33,11 @@ import (
 	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/crypto/secp256k1"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
-	"github.com/hetu-project/hetu/v1/ethereum/eip712"
-	"github.com/hetu-project/hetu/v1/types"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	"github.com/loka-network/loka/v1/ethereum/eip712"
+	"github.com/loka-network/loka/v1/types"
 
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 var evmosCodec codec.ProtoCodecMarshaler

@@ -11,12 +11,12 @@ import (
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
-	"github.com/hetu-project/hetu/v1/utils"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	"github.com/loka-network/loka/v1/utils"
 
-	"github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/testutil"
-	"github.com/hetu-project/hetu/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/testutil"
+	"github.com/loka-network/loka/v1/x/erc20/types"
 )
 
 var _ = Describe("Performing EVM transactions", Ordered, func() {
@@ -112,7 +112,7 @@ var _ = Describe("ERC20:", Ordered, func() {
 			// 	s.Require().NoError(err)
 
 			// 	coins := sdk.NewCoins(
-			// 		sdk.NewCoin("ahetu", fundsAmt),
+			// 		sdk.NewCoin("aloka", fundsAmt),
 			// 		sdk.NewCoin(stakingtypes.DefaultParams().BondDenom, fundsAmt),
 			// 	)
 			// 	err = testutil.FundAccount(s.ctx, s.app.BankKeeper, accAddr, coins)
@@ -128,7 +128,7 @@ var _ = Describe("ERC20:", Ordered, func() {
 				// 	proposal, found := s.app.GovKeeper.GetProposal(s.ctx, id)
 				// 	s.Require().True(found)
 
-				// 	_, err = testutil.Delegate(s.ctx, s.app, privKey, sdk.NewCoin("ahetu", math.NewInt(500000000000000000)), s.validator)
+				// 	_, err = testutil.Delegate(s.ctx, s.app, privKey, sdk.NewCoin("aloka", math.NewInt(500000000000000000)), s.validator)
 				// 	s.Require().NoError(err)
 
 				// 	_, err = testutil.Vote(s.ctx, s.app, privKey, id, govv1beta1.OptionYes)
@@ -154,7 +154,7 @@ var _ = Describe("ERC20:", Ordered, func() {
 				// 	proposal, found := s.app.GovKeeper.GetProposal(s.ctx, id)
 				// 	s.Require().True(found)
 
-				// 	_, err = testutil.Delegate(s.ctx, s.app, privKey, sdk.NewCoin("ahetu", math.NewInt(500000000000000000)), s.validator)
+				// 	_, err = testutil.Delegate(s.ctx, s.app, privKey, sdk.NewCoin("aloka", math.NewInt(500000000000000000)), s.validator)
 				// 	s.Require().NoError(err)
 
 				// 	_, err = testutil.Vote(s.ctx, s.app, privKey, id, govv1beta1.OptionYes)

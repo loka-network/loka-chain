@@ -1,6 +1,6 @@
-# argument to provide specific version of hetu node
+# argument to provide specific version of loka node
 ARG INITIAL_VERSION
-FROM hetuorg/hetu:$INITIAL_VERSION
+FROM lokaorg/loka:$INITIAL_VERSION
 
 # jq needs to perform changes of node parameters
 RUN apt-get update \ 
@@ -9,7 +9,7 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /go/src/github.com/hetu/hetu
+WORKDIR /go/src/github.com/loka/loka
 
 COPY ./init-node.sh .
 

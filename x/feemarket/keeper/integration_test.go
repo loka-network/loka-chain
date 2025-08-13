@@ -10,9 +10,9 @@ import (
 	. "github.com/onsi/gomega"
 
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
-	"github.com/hetu-project/hetu/v1/testutil"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	"github.com/loka-network/loka/v1/testutil"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )

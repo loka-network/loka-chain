@@ -29,11 +29,11 @@ import (
 	"github.com/ethereum/go-ethereum/common/math"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
-	"github.com/hetu-project/hetu/v1/rpc/backend"
+	"github.com/loka-network/loka/v1/rpc/backend"
 
-	rpctypes "github.com/hetu-project/hetu/v1/rpc/types"
-	"github.com/hetu-project/hetu/v1/types"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	rpctypes "github.com/loka-network/loka/v1/rpc/types"
+	"github.com/loka-network/loka/v1/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 // The Ethereum API allows applications to connect to an Evmos node that is

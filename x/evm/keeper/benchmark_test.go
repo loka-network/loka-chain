@@ -12,8 +12,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	evmostypes "github.com/hetu-project/hetu/v1/types"
-	"github.com/hetu-project/hetu/v1/x/evm/types"
+	evmostypes "github.com/loka-network/loka/v1/types"
+	"github.com/loka-network/loka/v1/x/evm/types"
 )
 
 func SetupContract(b *testing.B) (*KeeperTestSuite, common.Address) {

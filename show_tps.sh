@@ -1,3 +1,4 @@
+#!/bin/bash
 if [ "$1" = "-a" ]; then
     stdbuf -oL tail -f nohup.out | grep -E --line-buffered "block_size|tps|num_txs|num_txs_res" | awk '
     {

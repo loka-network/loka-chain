@@ -32,7 +32,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
-	"github.com/hetu-project/hetu/v1/utils"
+	"github.com/loka-network/loka/v1/utils"
 )
 
 // FlagGenesisTime defines the genesis time in string format
@@ -56,7 +56,7 @@ func MigrateGenesisCmd() *cobra.Command {
 		Short: "Migrate genesis to a specified target version",
 		Long:  "Migrate the source genesis into the target version and print to STDOUT.",
 		Example: fmt.Sprintf(
-			"%s migrate v3 /path/to/genesis.json --chain-id=hetu_560001-2 --genesis-time=2022-04-01T17:00:00Z",
+			"%s migrate v3 /path/to/genesis.json --chain-id=loka_567001-2 --genesis-time=2022-04-01T17:00:00Z",
 			version.AppName,
 		),
 		Args: cobra.ExactArgs(2),

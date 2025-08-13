@@ -47,10 +47,10 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	inflationtypes "github.com/hetu-project/hetu/v1/x/inflation/types"
+	inflationtypes "github.com/loka-network/loka/v1/x/inflation/types"
 
-	"github.com/hetu-project/hetu/v1/server"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/server"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 func startInProcess(cfg Config, val *Validator) error {
@@ -168,7 +168,7 @@ func collectGenFiles(cfg Config, vals []*Validator, outputDir string) error {
 	for i := 0; i < cfg.NumValidators; i++ {
 		tmCfg := vals[i].Ctx.Config
 
-		nodeDir := filepath.Join(outputDir, vals[i].Moniker, "hetud")
+		nodeDir := filepath.Join(outputDir, vals[i].Moniker, "lokad")
 		gentxsDir := filepath.Join(outputDir, "gentxs")
 
 		tmCfg.Moniker = vals[i].Moniker

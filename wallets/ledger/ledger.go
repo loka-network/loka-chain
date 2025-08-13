@@ -11,9 +11,9 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 
-	"github.com/hetu-project/hetu/v1/ethereum/eip712"
-	"github.com/hetu-project/hetu/v1/wallets/accounts"
-	"github.com/hetu-project/hetu/v1/wallets/usbwallet"
+	"github.com/loka-network/loka/v1/ethereum/eip712"
+	"github.com/loka-network/loka/v1/wallets/accounts"
+	"github.com/loka-network/loka/v1/wallets/usbwallet"
 )
 
 // Secp256k1DerivationFn defines the derivation function used on the Cosmos SDK Keyring.

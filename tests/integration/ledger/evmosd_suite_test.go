@@ -21,11 +21,11 @@ import (
 
 	"github.com/cometbft/cometbft/crypto/tmhash"
 	"github.com/cometbft/cometbft/version"
-	"github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/crypto/hd"
-	"github.com/hetu-project/hetu/v1/tests/integration/ledger/mocks"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	"github.com/hetu-project/hetu/v1/utils"
+	"github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/crypto/hd"
+	"github.com/loka-network/loka/v1/tests/integration/ledger/mocks"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/utils"
 	"github.com/stretchr/testify/suite"
 
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -34,9 +34,9 @@ import (
 	cosmosledger "github.com/cosmos/cosmos-sdk/crypto/ledger"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdktestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
-	clientkeys "github.com/hetu-project/hetu/v1/client/keys"
-	evmoskeyring "github.com/hetu-project/hetu/v1/crypto/keyring"
-	feemarkettypes "github.com/hetu-project/hetu/v1/x/feemarket/types"
+	clientkeys "github.com/loka-network/loka/v1/client/keys"
+	evmoskeyring "github.com/loka-network/loka/v1/crypto/keyring"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -90,7 +90,7 @@ func (suite *LedgerTestSuite) SetupEvmosApp() {
 	suite.app = app.Setup(false, feemarkettypes.DefaultGenesisState())
 	suite.ctx = suite.app.BaseApp.NewContextLegacy(false, tmproto.Header{
 		Height:          1,
-		ChainID:         "hetu_560001-1",
+		ChainID:         "loka_567001-1",
 		Time:            time.Now().UTC(),
 		ProposerAddress: consAddress.Bytes(),
 

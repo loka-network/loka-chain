@@ -28,8 +28,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/hashicorp/go-metrics"
 
-	"github.com/hetu-project/hetu/v1/contracts"
-	"github.com/hetu-project/hetu/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/contracts"
+	"github.com/loka-network/loka/v1/x/erc20/types"
 )
 
 var _ types.MsgServer = &Keeper{}

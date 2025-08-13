@@ -17,11 +17,11 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
 
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/x/evm/types"
 )
 
 const invalidAddress = "0x0000"
@@ -132,7 +132,7 @@ func (suite *MsgsTestSuite) TestMsgEthereumTx_BuildTx() {
 func (suite *MsgsTestSuite) TestMsgEthereumTx_ValidateBasic() {
 	var (
 		hundredInt   = big.NewInt(100)
-		validChainID = big.NewInt(560000)
+		validChainID = big.NewInt(567000)
 		zeroInt      = big.NewInt(0)
 		minusOneInt  = big.NewInt(-1)
 		//nolint:all
@@ -430,7 +430,7 @@ func (suite *MsgsTestSuite) TestMsgEthereumTx_ValidateBasic() {
 			errMsg:     "failed to unpack tx data",
 		},
 		{
-			msg:        "invalid chain ID (neither 560000 nor 560001)",
+			msg:        "invalid chain ID (neither 567000 nor 567001)",
 			to:         suite.to.Hex(),
 			amount:     hundredInt,
 			gasLimit:   1000,
@@ -440,7 +440,7 @@ func (suite *MsgsTestSuite) TestMsgEthereumTx_ValidateBasic() {
 			accessList: &ethtypes.AccessList{},
 			chainID:    hundredInt,
 			expectPass: false,
-			errMsg:     "chain ID must be 560000 or 560001 on Evmos",
+			errMsg:     "chain ID must be 567000 or 567001 on Evmos",
 		},
 	}
 

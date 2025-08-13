@@ -27,18 +27,18 @@ import (
 
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
-	"github.com/hetu-project/hetu/v1/server/config"
-	"github.com/hetu-project/hetu/v1/testutil"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	"github.com/hetu-project/hetu/v1/utils"
-	"github.com/hetu-project/hetu/v1/x/evm/statedb"
-	evm "github.com/hetu-project/hetu/v1/x/evm/types"
-	feemarkettypes "github.com/hetu-project/hetu/v1/x/feemarket/types"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	"github.com/loka-network/loka/v1/server/config"
+	"github.com/loka-network/loka/v1/testutil"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/utils"
+	"github.com/loka-network/loka/v1/x/evm/statedb"
+	evm "github.com/loka-network/loka/v1/x/evm/types"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
 
-	"github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/contracts"
-	"github.com/hetu-project/hetu/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/contracts"
+	"github.com/loka-network/loka/v1/x/erc20/types"
 
 	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
@@ -97,7 +97,7 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 	// init app
 	suite.app = app.Setup(false, feemarkettypes.DefaultGenesisState())
 	header := testutil.NewHeader(
-		1, time.Now().UTC(), "hetu_560001-1", suite.consAddress, nil, nil,
+		1, time.Now().UTC(), "loka_567001-1", suite.consAddress, nil, nil,
 	)
 	suite.ctx = suite.app.BaseApp.NewContextLegacy(false, header)
 	suite.ctx = suite.ctx.WithBlockGasMeter(storetypes.NewGasMeter(math.MaxUint64))

@@ -22,10 +22,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/testutil"
 	"github.com/stretchr/testify/require"
 
-	"github.com/hetu-project/hetu/v1/encoding"
-	v5 "github.com/hetu-project/hetu/v1/x/evm/migrations/v5"
-	v5types "github.com/hetu-project/hetu/v1/x/evm/migrations/v5/types"
-	"github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/encoding"
+	v5 "github.com/loka-network/loka/v1/x/evm/migrations/v5"
+	v5types "github.com/loka-network/loka/v1/x/evm/migrations/v5/types"
+	"github.com/loka-network/loka/v1/x/evm/types"
 )
 
 func TestMigrate(t *testing.T) {

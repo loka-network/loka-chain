@@ -34,14 +34,14 @@ import (
 	ibcgotesting "github.com/cosmos/ibc-go/v8/testing"
 	"github.com/cosmos/ibc-go/v8/testing/mock"
 
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
-	evmostypes "github.com/hetu-project/hetu/v1/types"
-	"github.com/hetu-project/hetu/v1/utils"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	evmostypes "github.com/loka-network/loka/v1/types"
+	"github.com/loka-network/loka/v1/utils"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 // ChainIDPrefix defines the default chain ID prefix for Evmos test chains
-var ChainIDPrefix = "hetu_560000-"
+var ChainIDPrefix = "loka_567000-"
 
 func init() {
 	ibcgotesting.ChainIDPrefix = ChainIDPrefix

@@ -39,11 +39,11 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/hetu-project/hetu/v1/encoding"
-	feemarkettypes "github.com/hetu-project/hetu/v1/x/feemarket/types"
+	"github.com/loka-network/loka/v1/encoding"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
 
-	"github.com/hetu-project/hetu/v1/cmd/config"
-	"github.com/hetu-project/hetu/v1/utils"
+	"github.com/loka-network/loka/v1/cmd/config"
+	"github.com/loka-network/loka/v1/utils"
 )
 
 func init() {

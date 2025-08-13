@@ -6,7 +6,7 @@ import (
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/ethereum/go-ethereum/common"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 	"github.com/stretchr/testify/require"
 )
 

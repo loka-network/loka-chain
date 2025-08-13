@@ -27,7 +27,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	protov2 "google.golang.org/protobuf/proto"
 
-	erc20api "github.com/hetu-project/hetu/v1/api/evmos/erc20/v1"
+	erc20api "github.com/loka-network/loka/v1/api/evmos/erc20/v1"
 )
 
 var (

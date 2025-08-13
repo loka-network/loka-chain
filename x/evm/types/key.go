@@ -19,7 +19,7 @@ import (
 	"encoding/binary"
 
 	"github.com/ethereum/go-ethereum/common"
-	ethermint "github.com/hetu-project/hetu/v1/types"
+	ethermint "github.com/loka-network/loka/v1/types"
 )
 
 const (
@@ -68,9 +68,9 @@ const (
 
 // KVStore key prefixes
 var (
-	KeyPrefixCode    = []byte{prefixCode}
-	KeyPrefixStorage = []byte{prefixStorage}
-	KeyPrefixParams  = []byte{prefixParams}
+	KeyPrefixCode       = []byte{prefixCode}
+	KeyPrefixStorage    = []byte{prefixStorage}
+	KeyPrefixParams     = []byte{prefixParams}
 	KeyPrefixHeaderHash = []byte{prefixHeaderHash}
 )
 

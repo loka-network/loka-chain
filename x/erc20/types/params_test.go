@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/hetu-project/hetu/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/x/erc20/types"
 	"github.com/stretchr/testify/suite"
 )
 

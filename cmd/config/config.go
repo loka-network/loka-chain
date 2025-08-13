@@ -20,12 +20,12 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/hetu-project/hetu/v1/types"
+	"github.com/loka-network/loka/v1/types"
 )
 
 const (
 	// Bech32Prefix defines the Bech32 prefix used for EthAccounts
-	Bech32Prefix = "hetu"
+	Bech32Prefix = "loka"
 
 	// Bech32PrefixAccAddr defines the Bech32 prefix of an account's address
 	Bech32PrefixAccAddr = Bech32Prefix
@@ -43,13 +43,13 @@ const (
 
 const (
 	// DisplayDenom defines the denomination displayed to users in client applications.
-	DisplayDenom = "hetu"
-	// BaseDenom defines to the default denomination used in Hetu (staking, governance, etc.)
-	BaseDenom = "ahetu"
+	DisplayDenom = "loka"
+	// BaseDenom defines to the default denomination used in Loka (staking, governance, etc.)
+	BaseDenom = "aloka"
 
 	// DisplayETHDenom defines the denomination displayed to users in client applications.
 	DisplayETHDenom = "eth"
-	// BaseDenom defines to the default denomination used in Hetu (EVM, gas, etc.)
+	// BaseDenom defines to the default denomination used in Loka (EVM, gas, etc.)
 	BaseETHDenom = "gas"
 )
 

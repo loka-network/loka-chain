@@ -17,10 +17,10 @@ RPC_PORT="854"
 IP_ADDR="0.0.0.0"
 
 KEY="dev0"
-CHAINID="hetu_560000-1"
+CHAINID="loka_567000-1"
 MONIKER="mymoniker"
 
-## default port prefixes for hetud
+## default port prefixes for lokad
 NODE_P2P_PORT="2660"
 NODE_PORT="2663"
 NODE_RPC_PORT="2666"
@@ -53,29 +53,29 @@ done
 
 set -euxo pipefail
 
-DATA_DIR=$(mktemp -d -t hetu-datadir.XXXXX)
+DATA_DIR=$(mktemp -d -t loka-datadir.XXXXX)
 
 if [[ ! "$DATA_DIR" ]]; then
     echo "Could not create $DATA_DIR"
     exit 1
 fi
 
-# Compile hetu
-echo "compiling hetu"
+# Compile loka
+echo "compiling loka"
 make build
 
 # PID array declaration
 arr=()
 
 init_func() {
-    "$PWD"/build/hetud keys add $KEY"$i" --keyring-backend test --home "$DATA_DIR$i" --no-backup --algo "eth_secp256k1"
-    "$PWD"/build/hetud init $MONIKER --chain-id $CHAINID --home "$DATA_DIR$i"
-    "$PWD"/build/hetud add-genesis-account \
-        "$("$PWD"/build/hetud keys show "$KEY$i" --keyring-backend test -a --home "$DATA_DIR$i")" 1000000000000000000ahetu,1000000000000000000stake \
+    "$PWD"/build/lokad keys add $KEY"$i" --keyring-backend test --home "$DATA_DIR$i" --no-backup --algo "eth_secp256k1"
+    "$PWD"/build/lokad init $MONIKER --chain-id $CHAINID --home "$DATA_DIR$i"
+    "$PWD"/build/lokad add-genesis-account \
+        "$("$PWD"/build/lokad keys show "$KEY$i" --keyring-backend test -a --home "$DATA_DIR$i")" 1000000000000000000aloka,1000000000000000000stake \
         --keyring-backend test --home "$DATA_DIR$i"
-    "$PWD"/build/hetud gentx "$KEY$i" 1000000000000000000stake --chain-id $CHAINID --keyring-backend test --home "$DATA_DIR$i"
-    "$PWD"/build/hetud collect-gentxs --home "$DATA_DIR$i"
-    "$PWD"/build/hetud validate-genesis --home "$DATA_DIR$i"
+    "$PWD"/build/lokad gentx "$KEY$i" 1000000000000000000stake --chain-id $CHAINID --keyring-backend test --home "$DATA_DIR$i"
+    "$PWD"/build/lokad collect-gentxs --home "$DATA_DIR$i"
+    "$PWD"/build/lokad validate-genesis --home "$DATA_DIR$i"
 
     if [[ $MODE == "pending" ]]; then
         ls $DATA_DIR$i
@@ -104,18 +104,18 @@ init_func() {
 }
 
 start_func() {
-    echo "starting hetu node $i in background ..."
-    "$PWD"/build/hetud start --pruning=nothing --rpc.unsafe \
+    echo "starting loka node $i in background ..."
+    "$PWD"/build/lokad start --pruning=nothing --rpc.unsafe \
         --p2p.laddr tcp://$IP_ADDR:$NODE_P2P_PORT"$i" --address tcp://$IP_ADDR:$NODE_PORT"$i" --rpc.laddr tcp://$IP_ADDR:$NODE_RPC_PORT"$i" \
         --json-rpc.address=$IP_ADDR:$RPC_PORT"$i" \
         --keyring-backend test --home "$DATA_DIR$i" \
         >"$DATA_DIR"/node"$i".log 2>&1 &
     disown
 
-    HETU_PID=$!
-    echo "started hetu node, pid=$HETU_PID"
+    LOKA_PID=$!
+    echo "started loka node, pid=$LOKA_PID"
     # add PID to array
-    arr+=("$HETU_PID")
+    arr+=("$LOKA_PID")
 
     if [[ $MODE == "pending" ]]; then
         echo "waiting for the first block..."
@@ -149,7 +149,7 @@ if [[ -z $TEST || $TEST == "rpc" || $TEST == "pending" ]]; then
 
     for i in $(seq 1 "$TEST_QTD"); do
         HOST_RPC=http://$IP_ADDR:$RPC_PORT"$i"
-        echo "going to test hetu node $HOST_RPC ..."
+        echo "going to test loka node $HOST_RPC ..."
         MODE=$MODE HOST=$HOST_RPC go test ./tests/... -timeout=$time_out -v -short
 
         RPC_FAIL=$?
@@ -158,12 +158,12 @@ if [[ -z $TEST || $TEST == "rpc" || $TEST == "pending" ]]; then
 fi
 
 stop_func() {
-    HETU_PID=$i
-    echo "shutting down node, pid=$HETU_PID ..."
+    LOKA_PID=$i
+    echo "shutting down node, pid=$LOKA_PID ..."
 
-    # Shutdown hetu node
-    kill -9 "$HETU_PID"
-    wait "$HETU_PID"
+    # Shutdown loka node
+    kill -9 "$LOKA_PID"
+    wait "$LOKA_PID"
 
     if [ $REMOVE_DATA_DIR == "true" ]; then
         rm -rf $DATA_DIR*

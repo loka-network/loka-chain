@@ -65,15 +65,15 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/crypto/hd"
+	"github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/crypto/hd"
 
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/server/config"
-	testutilconfig "github.com/hetu-project/hetu/v1/testutil/config"
-	evmostypes "github.com/hetu-project/hetu/v1/types"
-	"github.com/hetu-project/hetu/v1/utils"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/server/config"
+	testutilconfig "github.com/loka-network/loka/v1/testutil/config"
+	evmostypes "github.com/loka-network/loka/v1/types"
+	"github.com/loka-network/loka/v1/utils"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 // package-wide network lock to only allow one test network at a time
@@ -121,7 +121,7 @@ type Config struct {
 // testing requirements.
 func DefaultConfig() Config {
 	encCfg := testutilconfig.MakeConfigForTest(nil)
-	chianID := fmt.Sprintf("hetu_%d-1", tmrand.Int63n(9999999999999)+1)
+	chianID := fmt.Sprintf("loka_%d-1", tmrand.Int63n(9999999999999)+1)
 	app1 := app.NewEvmos(
 		log.NewNopLogger(),
 		dbm.NewMemDB(),
@@ -143,7 +143,7 @@ func DefaultConfig() Config {
 		TimeoutCommit:     3 * time.Second,
 		ChainID:           chianID,
 		NumValidators:     4,
-		BondDenom:         "ahetu",
+		BondDenom:         "aloka",
 		MinGasPrices:      fmt.Sprintf("0.000006%s", evmostypes.AttoEvmos),
 		AccountTokens:     sdk.TokensFromConsensusPower(1000000000000000000, evmostypes.PowerReduction),
 		StakingTokens:     sdk.TokensFromConsensusPower(500000000000000000, evmostypes.PowerReduction),
@@ -499,7 +499,7 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 			return nil, err
 		}
 
-		customAppTemplate, _ := config.AppConfig("ahetu")
+		customAppTemplate, _ := config.AppConfig("aloka")
 		srvconfig.SetConfigTemplate(customAppTemplate)
 		srvconfig.WriteConfigFile(filepath.Join(nodeDir, "config/app.toml"), appCfg)
 

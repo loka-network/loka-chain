@@ -15,7 +15,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/hetu-project/hetu/v1/ethereum/eip712"
+	"github.com/loka-network/loka/v1/ethereum/eip712"
 
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
@@ -36,7 +36,7 @@ import (
 	authz "github.com/cosmos/cosmos-sdk/x/authz"
 	ibctypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
 
 	evtypes "cosmossdk.io/x/evidence/types"
 	"cosmossdk.io/x/feegrant"
@@ -44,8 +44,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 func (suite *AnteTestSuite) BuildTestEthTx(

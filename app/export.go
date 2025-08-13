@@ -29,7 +29,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/hetu-project/hetu/v1/encoding"
+	"github.com/loka-network/loka/v1/encoding"
 )
 
 // NewDefaultGenesisState generates the default state for the application.

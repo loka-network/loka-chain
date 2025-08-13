@@ -15,9 +15,9 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/testutil/tx"
-	evm "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/testutil/tx"
+	evm "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 // DeployContract deploys a contract with the provided private key,

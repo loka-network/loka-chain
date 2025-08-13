@@ -22,7 +22,7 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
 
 	errorsmod "cosmossdk.io/errors"
 	sdkmath "cosmossdk.io/math"
@@ -34,23 +34,23 @@ import (
 )
 
 const (
-	// MainnetChainID defines the Hetud EIP155 chain ID for mainnet
-	MainnetChainID = "hetu_560001"
-	// TestnetChainID defines the Hetud EIP155 chain ID for testnet
-	TestnetChainID = "hetu_560000"
+	// MainnetChainID defines the Lokad EIP155 chain ID for mainnet
+	MainnetChainID = "loka_567001"
+	// TestnetChainID defines the Lokad EIP155 chain ID for testnet
+	TestnetChainID = "loka_567000"
 	// TestingChainID defines the Evmos EIP155 chain ID for testing purposes
 	// like the local node.
-	TestingChainID = "hetu_560002"
-	// BaseDenom defines the Hetud mainnet denomination
-	BaseDenom = "ahetu"
+	TestingChainID = "loka_567002"
+	// BaseDenom defines the Lokad mainnet denomination
+	BaseDenom = "aloka"
 )
 
-// IsMainnet returns true if the chain-id has the Hetud mainnet EIP155 chain prefix.
+// IsMainnet returns true if the chain-id has the Lokad mainnet EIP155 chain prefix.
 func IsMainnet(chainID string) bool {
 	return strings.HasPrefix(chainID, MainnetChainID)
 }
 
-// IsTestnet returns true if the chain-id has the Hetud testnet EIP155 chain prefix.
+// IsTestnet returns true if the chain-id has the Lokad testnet EIP155 chain prefix.
 func IsTestnet(chainID string) bool {
 	return strings.HasPrefix(chainID, TestnetChainID)
 }
@@ -107,7 +107,7 @@ func GetEvmosAddressFromBech32(address string) (sdk.AccAddress, error) {
 }
 
 func TempDir(defaultHome string) string {
-	dir, err := os.MkdirTemp("", "hetu")
+	dir, err := os.MkdirTemp("", "loka")
 	if err != nil {
 		dir = defaultHome
 	}

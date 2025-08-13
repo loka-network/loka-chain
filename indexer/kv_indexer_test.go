@@ -13,12 +13,12 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
-	evmenc "github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/indexer"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	"github.com/hetu-project/hetu/v1/utils"
-	"github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	evmenc "github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/indexer"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/utils"
+	"github.com/loka-network/loka/v1/x/evm/types"
 	"github.com/stretchr/testify/require"
 )
 

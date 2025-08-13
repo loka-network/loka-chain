@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hetu-project/hetu/v1/utils"
+	"github.com/loka-network/loka/v1/utils"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -26,14 +26,14 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/params"
-	"github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/testutil"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	evmostypes "github.com/hetu-project/hetu/v1/types"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
-	feemarkettypes "github.com/hetu-project/hetu/v1/x/feemarket/types"
+	"github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/testutil"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	evmostypes "github.com/loka-network/loka/v1/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
@@ -152,7 +152,7 @@ func (suite *KeeperTestSuite) SetupAppWithT(checkTx bool, t require.TestingT) {
 		// Initialize the chain
 		suite.app.InitChain(
 			&abci.RequestInitChain{
-				ChainId:         "hetu_560000-1",
+				ChainId:         "loka_567000-1",
 				Validators:      []abci.ValidatorUpdate{},
 				ConsensusParams: app.DefaultConsensusParams,
 				AppStateBytes:   stateBytes,
@@ -161,7 +161,7 @@ func (suite *KeeperTestSuite) SetupAppWithT(checkTx bool, t require.TestingT) {
 	}
 
 	header := testutil.NewHeader(
-		1, time.Now().UTC(), "hetu_560000-1", suite.consAddress,
+		1, time.Now().UTC(), "loka_567000-1", suite.consAddress,
 		tmhash.Sum([]byte("app")), tmhash.Sum([]byte("validators")),
 	)
 	suite.ctx = suite.app.NewContextLegacy(checkTx, header)

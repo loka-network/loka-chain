@@ -18,7 +18,7 @@ package types
 import (
 	"fmt"
 
-	"github.com/hetu-project/hetu/v1/x/feemarket/types"
+	"github.com/loka-network/loka/v1/x/feemarket/types"
 
 	"cosmossdk.io/math"
 	sdkmath "cosmossdk.io/math"

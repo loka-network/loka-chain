@@ -9,9 +9,9 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/hetu-project/hetu/v1/x/erc20/types"
-	"github.com/hetu-project/hetu/v1/x/evm/statedb"
-	evm "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/x/evm/statedb"
+	evm "github.com/loka-network/loka/v1/x/evm/types"
 	"github.com/stretchr/testify/mock"
 )
 

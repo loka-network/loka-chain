@@ -11,10 +11,10 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/hetu-project/hetu/v1/server/config"
-	"github.com/hetu-project/hetu/v1/testutil"
-	"github.com/hetu-project/hetu/v1/x/evm/statedb"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/server/config"
+	"github.com/loka-network/loka/v1/testutil"
+	"github.com/loka-network/loka/v1/x/evm/statedb"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 	"github.com/stretchr/testify/require"
 )
 

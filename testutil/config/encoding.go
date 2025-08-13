@@ -11,9 +11,9 @@ import (
 	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/x/evm"
-	"github.com/hetu-project/hetu/v1/x/feemarket"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/x/evm"
+	"github.com/loka-network/loka/v1/x/feemarket"
 )
 
 func MakeConfigForTest(moduleManager module.BasicManager) sdktestutil.TestEncodingConfig {

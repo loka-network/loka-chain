@@ -25,7 +25,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
-	"github.com/hetu-project/hetu/v1/types"
+	"github.com/loka-network/loka/v1/types"
 )
 
 func NewDynamicFeeTx(tx *ethtypes.Transaction) (*DynamicFeeTx, error) {
@@ -269,10 +269,10 @@ func (tx DynamicFeeTx) Validate() error {
 		)
 	}
 
-	if !(chainID.Cmp(big.NewInt(560001)) == 0 || chainID.Cmp(big.NewInt(560000)) == 0 || chainID.Cmp(big.NewInt(560002)) == 0) {
+	if !(chainID.Cmp(big.NewInt(567001)) == 0 || chainID.Cmp(big.NewInt(567000)) == 0 || chainID.Cmp(big.NewInt(567002)) == 0) {
 		return errorsmod.Wrapf(
 			errortypes.ErrInvalidChainID,
-			"chain ID must be 560000 or 560001 or 560002 on Evmos, got %s", chainID,
+			"chain ID must be 567000 or 567001 or 567002 on Evmos, got %s", chainID,
 		)
 	}
 

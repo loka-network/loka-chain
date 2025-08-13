@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-	"github.com/hetu-project/hetu/v1/x/inflation/types"
+	"github.com/loka-network/loka/v1/x/inflation/types"
 )
 
 func (suite *KeeperTestSuite) TestParams() {

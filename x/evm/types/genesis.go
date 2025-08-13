@@ -18,7 +18,7 @@ package types
 import (
 	"fmt"
 
-	"github.com/hetu-project/hetu/v1/types"
+	"github.com/loka-network/loka/v1/types"
 )
 
 // Validate performs a basic validation of a GenesisAccount fields.

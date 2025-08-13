@@ -56,16 +56,16 @@ import (
 	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/hetu-project/hetu/v1/crypto/hd"
-	"github.com/hetu-project/hetu/v1/server/config"
-	srvflags "github.com/hetu-project/hetu/v1/server/flags"
+	"github.com/loka-network/loka/v1/crypto/hd"
+	"github.com/loka-network/loka/v1/server/config"
+	srvflags "github.com/loka-network/loka/v1/server/flags"
 
-	evmostypes "github.com/hetu-project/hetu/v1/types"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	evmostypes "github.com/loka-network/loka/v1/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 
-	cmdcfg "github.com/hetu-project/hetu/v1/cmd/config"
-	evmoskr "github.com/hetu-project/hetu/v1/crypto/keyring"
-	"github.com/hetu-project/hetu/v1/testutil/network"
+	cmdcfg "github.com/loka-network/loka/v1/cmd/config"
+	evmoskr "github.com/loka-network/loka/v1/crypto/keyring"
+	"github.com/loka-network/loka/v1/testutil/network"
 )
 
 var (
@@ -145,7 +145,7 @@ or a similar setup where each node has a manually configurable IP address.
 Note, strict routability for addresses is turned off in the config file.
 
 Example:
-	hetud testnet init-files --v 4 --output-dir ./.testnets --starting-ip-address 192.168.10.2
+	lokad testnet init-files --v 4 --output-dir ./.testnets --starting-ip-address 192.168.10.2
 	`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -172,7 +172,7 @@ Example:
 
 	addTestnetFlagsToCmd(cmd)
 	cmd.Flags().String(flagNodeDirPrefix, "node", "Prefix the directory name for each node with (node results in node0, node1, ...)")
-	cmd.Flags().String(flagNodeDaemonHome, "hetud", "Home directory of the node's daemon configuration")
+	cmd.Flags().String(flagNodeDaemonHome, "lokad", "Home directory of the node's daemon configuration")
 	cmd.Flags().String(flagStartingIPAddress, "192.168.0.1", "Starting IP address (192.168.0.1 results in persistent peers list ID0@192.168.0.1:46656, ID1@192.168.0.2:46656, ...)")
 	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")
 
@@ -189,7 +189,7 @@ and generate "v" directories, populated with necessary validator configuration f
 (private validator, genesis, config, etc.).
 
 Example:
-	hetud testnet --v 4 --output-dir ./.testnets
+	lokad testnet --v 4 --output-dir ./.testnets
 	`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			args := startArgs{}
@@ -231,7 +231,7 @@ func initTestnetFiles(
 	args initArgs,
 ) error {
 	if args.chainID == "" {
-		args.chainID = fmt.Sprintf("hetu_%d-1", tmrand.Int63n(9999999999999)+1)
+		args.chainID = fmt.Sprintf("loka_%d-1", tmrand.Int63n(9999999999999)+1)
 	}
 
 	nodeIDs := make([]string, args.numValidators)

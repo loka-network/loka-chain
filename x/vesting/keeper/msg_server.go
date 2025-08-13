@@ -21,7 +21,7 @@ import (
 	"strconv"
 	"time"
 
-	evmostypes "github.com/hetu-project/hetu/v1/types"
+	evmostypes "github.com/loka-network/loka/v1/types"
 
 	"github.com/hashicorp/go-metrics"
 
@@ -33,7 +33,7 @@ import (
 	vestingexported "github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 	sdkvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 
-	"github.com/hetu-project/hetu/v1/x/vesting/types"
+	"github.com/loka-network/loka/v1/x/vesting/types"
 )
 
 var _ types.MsgServer = &Keeper{}

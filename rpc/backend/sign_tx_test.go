@@ -15,10 +15,10 @@ import (
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
-	"github.com/hetu-project/hetu/v1/rpc/backend/mocks"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	"github.com/loka-network/loka/v1/rpc/backend/mocks"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 func (suite *BackendTestSuite) TestSendTransaction() {

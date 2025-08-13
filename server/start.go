@@ -65,11 +65,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
-	"github.com/hetu-project/hetu/v1/indexer"
-	ethdebug "github.com/hetu-project/hetu/v1/rpc/namespaces/ethereum/debug"
-	"github.com/hetu-project/hetu/v1/server/config"
-	srvflags "github.com/hetu-project/hetu/v1/server/flags"
-	evmostypes "github.com/hetu-project/hetu/v1/types"
+	"github.com/loka-network/loka/v1/indexer"
+	ethdebug "github.com/loka-network/loka/v1/rpc/namespaces/ethereum/debug"
+	"github.com/loka-network/loka/v1/server/config"
+	srvflags "github.com/loka-network/loka/v1/server/flags"
+	evmostypes "github.com/loka-network/loka/v1/types"
 )
 
 const FlagAsyncCheckTx = "async-check-tx"

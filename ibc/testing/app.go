@@ -35,9 +35,9 @@ import (
 
 	ibcgotesting "github.com/cosmos/ibc-go/v8/testing"
 
-	evmosapp "github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/types"
-	"github.com/hetu-project/hetu/v1/utils"
+	evmosapp "github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/types"
+	"github.com/loka-network/loka/v1/utils"
 )
 
 var DefaultTestingAppInit func() (ibcgotesting.TestingApp, map[string]json.RawMessage) = evmosapp.SetupTestingApp
@@ -81,7 +81,7 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 
 	// set validators and delegations
 	stakingParams := stakingtypes.DefaultParams()
-	// set bond demon to be ahetu
+	// set bond demon to be aloka
 	stakingParams.BondDenom = utils.BaseDenom
 	stakingGenesis := stakingtypes.NewGenesisState(stakingParams, validators, delegations)
 	genesisState[stakingtypes.ModuleName] = app.AppCodec().MustMarshalJSON(stakingGenesis)

@@ -12,12 +12,12 @@ import (
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/contracts"
-	ibctesting "github.com/hetu-project/hetu/v1/ibc/testing"
-	teststypes "github.com/hetu-project/hetu/v1/types/tests"
-	"github.com/hetu-project/hetu/v1/utils"
-	"github.com/hetu-project/hetu/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/contracts"
+	ibctesting "github.com/loka-network/loka/v1/ibc/testing"
+	teststypes "github.com/loka-network/loka/v1/types/tests"
+	"github.com/loka-network/loka/v1/utils"
+	"github.com/loka-network/loka/v1/x/erc20/types"
 	. "github.com/onsi/ginkgo/v2"
 )
 
@@ -147,36 +147,36 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 			ibcAtomBalanceAfter := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, teststypes.UatomIbcdenom)
 			s.Require().Equal(amount, ibcAtomBalanceAfter.Amount.Int64())
 		})
-		It("should transfer and not convert ahetu", func() {
-			// Register 'ahetu' coin in ERC-20 keeper to validate it is not converting the coins when receiving 'ahetu' thru IBC
+		It("should transfer and not convert aloka", func() {
+			// Register 'aloka' coin in ERC-20 keeper to validate it is not converting the coins when receiving 'aloka' thru IBC
 			pair, err := s.app.Erc20Keeper.RegisterCoin(s.EvmosChain.GetContext(), evmosMeta)
 			s.Require().NoError(err)
 
-			ahetuInitialBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, utils.BaseDenom)
+			alokaInitialBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, utils.BaseDenom)
 
-			// 1. Send ahetu from Evmos to Osmosis
+			// 1. Send aloka from Evmos to Osmosis
 			s.SendAndReceiveMessage(s.pathOsmosisEvmos, s.EvmosChain, utils.BaseDenom, amount, receiver, sender, 1, "")
 
-			ahetuAfterBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, utils.BaseDenom)
-			s.Require().Equal(ahetuInitialBalance.Amount.Sub(math.NewInt(amount)).Sub(sendAndReceiveMsgFee), ahetuAfterBalance.Amount)
+			alokaAfterBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, utils.BaseDenom)
+			s.Require().Equal(alokaInitialBalance.Amount.Sub(math.NewInt(amount)).Sub(sendAndReceiveMsgFee), alokaAfterBalance.Amount)
 
-			// check ibc ahetu coins balance on Osmosis
-			ahetuIBCBalanceBefore := s.IBCOsmosisChain.GetSimApp().BankKeeper.GetBalance(s.IBCOsmosisChain.GetContext(), senderAcc, teststypes.AevmosIbcdenom)
-			s.Require().Equal(amount, ahetuIBCBalanceBefore.Amount.Int64())
+			// check ibc aloka coins balance on Osmosis
+			alokaIBCBalanceBefore := s.IBCOsmosisChain.GetSimApp().BankKeeper.GetBalance(s.IBCOsmosisChain.GetContext(), senderAcc, teststypes.AevmosIbcdenom)
+			s.Require().Equal(amount, alokaIBCBalanceBefore.Amount.Int64())
 
-			// 2. Send ahetu IBC coins from Osmosis to Evmos
+			// 2. Send aloka IBC coins from Osmosis to Evmos
 			ibcCoinMeta := fmt.Sprintf("%s/%s", teststypes.AevmosDenomtrace.Path, teststypes.AevmosDenomtrace.BaseDenom)
 			s.SendBackCoins(s.pathOsmosisEvmos, s.IBCOsmosisChain, teststypes.AevmosIbcdenom, amount, sender, receiver, 1, ibcCoinMeta)
 
-			// check ibc ahetu coins balance on Osmosis - should be zero
-			ahetuIBCSenderFinalBalance := s.IBCOsmosisChain.GetSimApp().BankKeeper.GetBalance(s.IBCOsmosisChain.GetContext(), senderAcc, teststypes.AevmosIbcdenom)
-			s.Require().Equal(int64(0), ahetuIBCSenderFinalBalance.Amount.Int64())
+			// check ibc aloka coins balance on Osmosis - should be zero
+			alokaIBCSenderFinalBalance := s.IBCOsmosisChain.GetSimApp().BankKeeper.GetBalance(s.IBCOsmosisChain.GetContext(), senderAcc, teststypes.AevmosIbcdenom)
+			s.Require().Equal(int64(0), alokaIBCSenderFinalBalance.Amount.Int64())
 
-			// check ahetu balance after transfer - should be equal to initial balance
-			ahetuFinalBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, utils.BaseDenom)
+			// check aloka balance after transfer - should be equal to initial balance
+			alokaFinalBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, utils.BaseDenom)
 
 			totalFees := sendBackCoinsFee.Add(sendAndReceiveMsgFee)
-			s.Require().Equal(ahetuInitialBalance.Amount.Sub(totalFees), ahetuFinalBalance.Amount)
+			s.Require().Equal(alokaInitialBalance.Amount.Sub(totalFees), alokaFinalBalance.Amount)
 
 			// check IBC Coin balance - should be zero
 			ibcCoinsBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, teststypes.AevmosIbcdenom)

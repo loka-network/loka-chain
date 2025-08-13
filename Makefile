@@ -6,13 +6,13 @@ TMVERSION := $(shell go list -m github.com/cometbft/cometbft | sed 's:.* ::')
 COMMIT := $(shell git log -1 --format='%H')
 LEDGER_ENABLED ?= true
 BINDIR ?= $(GOPATH)/bin
-HETU_BINARY = hetud
-HETU_DIR = hetu
+LOKA_BINARY = lokad
+LOKA_DIR = loka
 BUILDDIR ?= $(CURDIR)/build
-HTTPS_GIT := https://github.com/hetu-project/hetu-hub.git
+HTTPS_GIT := https://github.com/loka-network/loka-chain.git
 DOCKER := $(shell which docker)
-NAMESPACE := hetuorg
-PROJECT := hetu
+NAMESPACE := lokaorg
+PROJECT := loka
 DOCKER_IMAGE := $(NAMESPACE)/$(PROJECT)
 COMMIT_HASH := $(shell git rev-parse --short=7 HEAD)
 DOCKER_TAG := $(COMMIT_HASH)
@@ -61,8 +61,8 @@ build_tags := $(strip $(build_tags))
 
 # process linker flags
 
-ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=hetu \
-          -X github.com/cosmos/cosmos-sdk/version.AppName=$(HETU_BINARY) \
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=loka \
+          -X github.com/cosmos/cosmos-sdk/version.AppName=$(LOKA_BINARY) \
           -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
           -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
           -X github.com/cometbft/cometbft/version.TMCoreSemVer=$(TMVERSION)
@@ -133,7 +133,7 @@ build-reproducible: go.sum
 	$(DOCKER) rm latest-build || true
 	$(DOCKER) run --volume=$(CURDIR):/sources:ro \
         --env TARGET_PLATFORMS='linux/amd64' \
-        --env APP=hetud \
+        --env APP=lokad \
         --env VERSION=$(VERSION) \
         --env COMMIT=$(COMMIT) \
         --env CGO_ENABLED=1 \
@@ -148,12 +148,12 @@ build-docker:
 	$(DOCKER) tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
 	# docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:${COMMIT_HASH}
 	# update old container
-	$(DOCKER) rm hetu || true
+	$(DOCKER) rm loka || true
 	# create a new container from the latest image
-	$(DOCKER) create --name hetu -t -i ${DOCKER_IMAGE}:latest hetu
+	$(DOCKER) create --name loka -t -i ${DOCKER_IMAGE}:latest loka
 	# move the binaries to the ./build directory
 	mkdir -p ./build/
-	$(DOCKER) cp hetu:/usr/bin/hetud ./build/
+	$(DOCKER) cp loka:/usr/bin/lokad ./build/
 
 push-docker: build-docker
 	$(DOCKER) push ${DOCKER_IMAGE}:${DOCKER_TAG}
@@ -279,7 +279,7 @@ update-swagger-docs: statik
 .PHONY: update-swagger-docs
 
 godocs:
-	@echo "--> Wait a few seconds and visit http://localhost:6060/pkg/github.com/hetu/hetu"
+	@echo "--> Wait a few seconds and visit http://localhost:6060/pkg/github.com/loka/loka"
 	godoc -http=:6060
 
 ###############################################################################
@@ -313,7 +313,7 @@ test-e2e:
 		make build-docker; \
 	fi
 	@mkdir -p ./build
-	@rm -rf build/.hetud
+	@rm -rf build/.lokad
 	@INITIAL_VERSION=$(INITIAL_VERSION) TARGET_VERSION=$(TARGET_VERSION) \
 	E2E_SKIP_CLEANUP=$(E2E_SKIP_CLEANUP) MOUNT_PATH=$(MOUNT_PATH) CHAIN_ID=$(CHAIN_ID) \
 	go test -v ./tests/e2e -run ^TestIntegrationTestSuite$
@@ -472,7 +472,7 @@ localnet-build:
 
 # Start a 4-node testnet locally
 localnet-start: localnet-stop localnet-build
-	@if ! [ -f build/node0/$(HETU_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/hetu:Z hetu/node "./hetud testnet init-files --v 4 -o /hetu --keyring-backend=test --starting-ip-address 192.167.0.2 --chain-id hetu_560000-1"; fi
+	@if ! [ -f build/node0/$(LOKA_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/loka:Z loka/node "./lokad testnet init-files --v 4 -o /loka --keyring-backend=test --starting-ip-address 192.167.0.2 --chain-id loka_567000-1"; fi
 	docker-compose up -d
 
 # Stop testnet
@@ -488,15 +488,15 @@ localnet-clean:
 localnet-unsafe-reset:
 	docker-compose down
 ifeq ($(OS),Windows_NT)
-	@docker run --rm -v $(CURDIR)\build\node0\hetud:/hetu\Z hetu/node "./hetud tendermint unsafe-reset-all --home=/hetu"
-	@docker run --rm -v $(CURDIR)\build\node1\hetud:/hetu\Z hetu/node "./hetud tendermint unsafe-reset-all --home=/hetu"
-	@docker run --rm -v $(CURDIR)\build\node2\hetud:/hetu\Z hetu/node "./hetud tendermint unsafe-reset-all --home=/hetu"
-	@docker run --rm -v $(CURDIR)\build\node3\hetud:/hetu\Z hetu/node "./hetud tendermint unsafe-reset-all --home=/hetu"
+	@docker run --rm -v $(CURDIR)\build\node0\lokad:/loka\Z loka/node "./lokad tendermint unsafe-reset-all --home=/loka"
+	@docker run --rm -v $(CURDIR)\build\node1\lokad:/loka\Z loka/node "./lokad tendermint unsafe-reset-all --home=/loka"
+	@docker run --rm -v $(CURDIR)\build\node2\lokad:/loka\Z loka/node "./lokad tendermint unsafe-reset-all --home=/loka"
+	@docker run --rm -v $(CURDIR)\build\node3\lokad:/loka\Z loka/node "./lokad tendermint unsafe-reset-all --home=/loka"
 else
-	@docker run --rm -v $(CURDIR)/build/node0/hetud:/hetu:Z hetu/node "./hetud tendermint unsafe-reset-all --home=/hetu"
-	@docker run --rm -v $(CURDIR)/build/node1/hetud:/hetu:Z hetu/node "./hetud tendermint unsafe-reset-all --home=/hetu"
-	@docker run --rm -v $(CURDIR)/build/node2/hetud:/hetu:Z hetu/node "./hetud tendermint unsafe-reset-all --home=/hetu"
-	@docker run --rm -v $(CURDIR)/build/node3/hetud:/hetu:Z hetu/node "./hetud tendermint unsafe-reset-all --home=/hetu"
+	@docker run --rm -v $(CURDIR)/build/node0/lokad:/loka:Z loka/node "./lokad tendermint unsafe-reset-all --home=/loka"
+	@docker run --rm -v $(CURDIR)/build/node1/lokad:/loka:Z loka/node "./lokad tendermint unsafe-reset-all --home=/loka"
+	@docker run --rm -v $(CURDIR)/build/node2/lokad:/loka:Z loka/node "./lokad tendermint unsafe-reset-all --home=/loka"
+	@docker run --rm -v $(CURDIR)/build/node3/lokad:/loka:Z loka/node "./lokad tendermint unsafe-reset-all --home=/loka"
 endif
 
 # Clean testnet
@@ -509,7 +509,7 @@ localnet-show-logstream:
 ###                                Releasing                                ###
 ###############################################################################
 
-PACKAGE_NAME:=github.com/hetu/hetu
+PACKAGE_NAME:=github.com/loka/loka
 GOLANG_CROSS_VERSION  = v1.23.3
 GOPATH ?= '$(HOME)/go'
 release-dry-run:

@@ -19,8 +19,8 @@ package inflation
 import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/hetu-project/hetu/v1/x/inflation/keeper"
-	"github.com/hetu-project/hetu/v1/x/inflation/types"
+	"github.com/loka-network/loka/v1/x/inflation/keeper"
+	"github.com/loka-network/loka/v1/x/inflation/types"
 )
 
 // InitGenesis import module genesis

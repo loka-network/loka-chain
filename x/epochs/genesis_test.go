@@ -9,10 +9,10 @@ import (
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/stretchr/testify/require"
 
-	simapp "github.com/hetu-project/hetu/v1/app"
-	"github.com/hetu-project/hetu/v1/x/epochs"
-	"github.com/hetu-project/hetu/v1/x/epochs/types"
-	feemarkettypes "github.com/hetu-project/hetu/v1/x/feemarket/types"
+	simapp "github.com/loka-network/loka/v1/app"
+	"github.com/loka-network/loka/v1/x/epochs"
+	"github.com/loka-network/loka/v1/x/epochs/types"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
 )
 
 func TestEpochsExportGenesis(t *testing.T) {

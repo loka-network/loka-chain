@@ -15,12 +15,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	"github.com/hetu-project/hetu/v1/cmd/config"
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/ethereum/eip712"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	"github.com/hetu-project/hetu/v1/types"
-	"github.com/hetu-project/hetu/v1/utils"
+	"github.com/loka-network/loka/v1/cmd/config"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/ethereum/eip712"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/types"
+	"github.com/loka-network/loka/v1/utils"
 	"github.com/stretchr/testify/require"
 )
 
@@ -31,7 +31,7 @@ var (
 		encoding.MakeConfig().TxConfig,
 	)
 )
-var feePayerAddress = "hetu17xpfvakm2amg962yls6f84z3kell8c5l9zem6z"
+var feePayerAddress = "loka17xpfvakm2amg962yls6f84z3kell8c5l3q2s4k"
 
 type TestCaseStruct struct {
 	txBuilder              client.TxBuilder
@@ -68,7 +68,7 @@ func TestLedgerPreprocessing(t *testing.T) {
 		require.True(t, len(hasExtOptsTx.GetExtensionOptions()) == 1)
 
 		expectedExt := types.ExtensionOptionsWeb3Tx{
-			TypedDataChainID: 560000,
+			TypedDataChainID: 567000,
 			FeePayer:         feePayerAddress,
 			FeePayerSig:      tc.expectedSignatureBytes,
 		}
@@ -209,7 +209,7 @@ func createPopulatedTestCase(t *testing.T) TestCaseStruct {
 
 	msgSend := banktypes.MsgSend{
 		FromAddress: feePayerAddress,
-		ToAddress:   "hetu12luku6uxehhak02py4rcz65zu0swh7wjun6msa",
+		ToAddress:   "loka12luku6uxehhak02py4rcz65zu0swh7wjxyafd5",
 		Amount: sdk.NewCoins(
 			sdk.NewCoin(
 				utils.BaseDenom,

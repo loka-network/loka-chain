@@ -4,7 +4,7 @@ import (
 	_ "embed" // embed compiled smart contract
 	"encoding/json"
 
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 var (

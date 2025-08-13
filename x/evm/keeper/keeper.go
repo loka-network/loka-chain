@@ -32,9 +32,9 @@ import (
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/params"
 
-	evmostypes "github.com/hetu-project/hetu/v1/types"
-	"github.com/hetu-project/hetu/v1/x/evm/statedb"
-	"github.com/hetu-project/hetu/v1/x/evm/types"
+	evmostypes "github.com/loka-network/loka/v1/types"
+	"github.com/loka-network/loka/v1/x/evm/statedb"
+	"github.com/loka-network/loka/v1/x/evm/types"
 )
 
 // CustomContractFn defines a custom precompiled contract generator with ctx, rules and returns a precompiled contract.
@@ -138,8 +138,8 @@ func (k *Keeper) WithChainID(ctx sdk.Context) {
 		panic("chain id already set")
 	}
 
-	if !(chainID.Cmp(big.NewInt(560001)) == 0 || chainID.Cmp(big.NewInt(560000)) == 0 || chainID.Cmp(big.NewInt(560002)) == 0) {
-		panic("EVM only supports Evmos chain identifiers (560000 or 560001 or 560002)")
+	if !(chainID.Cmp(big.NewInt(567001)) == 0 || chainID.Cmp(big.NewInt(567000)) == 0 || chainID.Cmp(big.NewInt(567002)) == 0) {
+		panic("EVM only supports Evmos chain identifiers (567000 or 567001 or 567002)")
 	}
 
 	k.eip155ChainID = chainID

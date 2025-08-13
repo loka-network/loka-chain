@@ -26,8 +26,8 @@ import (
 	"github.com/cosmos/ibc-go/v8/modules/core/exported"
 
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/hetu-project/hetu/v1/ibc"
-	"github.com/hetu-project/hetu/v1/x/erc20/keeper"
+	"github.com/loka-network/loka/v1/ibc"
+	"github.com/loka-network/loka/v1/x/erc20/keeper"
 )
 
 var _ porttypes.IBCModule = &IBCMiddleware{}

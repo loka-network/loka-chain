@@ -143,41 +143,41 @@ import (
 	icahosttypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/types"
 	icatypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/types"
 
-	ethante "github.com/hetu-project/hetu/v1/app/ante/evm"
-	"github.com/hetu-project/hetu/v1/ethereum/eip712"
-	srvflags "github.com/hetu-project/hetu/v1/server/flags"
-	evmostypes "github.com/hetu-project/hetu/v1/types"
-	"github.com/hetu-project/hetu/v1/x/evm"
-	evmkeeper "github.com/hetu-project/hetu/v1/x/evm/keeper"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
-	"github.com/hetu-project/hetu/v1/x/feemarket"
-	feemarketkeeper "github.com/hetu-project/hetu/v1/x/feemarket/keeper"
-	feemarkettypes "github.com/hetu-project/hetu/v1/x/feemarket/types"
+	ethante "github.com/loka-network/loka/v1/app/ante/evm"
+	"github.com/loka-network/loka/v1/ethereum/eip712"
+	srvflags "github.com/loka-network/loka/v1/server/flags"
+	evmostypes "github.com/loka-network/loka/v1/types"
+	"github.com/loka-network/loka/v1/x/evm"
+	evmkeeper "github.com/loka-network/loka/v1/x/evm/keeper"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/x/feemarket"
+	feemarketkeeper "github.com/loka-network/loka/v1/x/feemarket/keeper"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
 
 	// unnamed import of statik for swagger UI support
-	_ "github.com/hetu-project/hetu/v1/client/docs/statik"
+	_ "github.com/loka-network/loka/v1/client/docs/statik"
 
-	"github.com/hetu-project/hetu/v1/app/ante"
-	"github.com/hetu-project/hetu/v1/x/epochs"
-	epochskeeper "github.com/hetu-project/hetu/v1/x/epochs/keeper"
-	epochstypes "github.com/hetu-project/hetu/v1/x/epochs/types"
-	"github.com/hetu-project/hetu/v1/x/erc20"
-	erc20client "github.com/hetu-project/hetu/v1/x/erc20/client"
-	erc20keeper "github.com/hetu-project/hetu/v1/x/erc20/keeper"
-	erc20types "github.com/hetu-project/hetu/v1/x/erc20/types"
-	"github.com/hetu-project/hetu/v1/x/inflation"
-	inflationkeeper "github.com/hetu-project/hetu/v1/x/inflation/keeper"
-	inflationtypes "github.com/hetu-project/hetu/v1/x/inflation/types"
-	"github.com/hetu-project/hetu/v1/x/vesting"
-	vestingkeeper "github.com/hetu-project/hetu/v1/x/vesting/keeper"
-	vestingtypes "github.com/hetu-project/hetu/v1/x/vesting/types"
+	"github.com/loka-network/loka/v1/app/ante"
+	"github.com/loka-network/loka/v1/x/epochs"
+	epochskeeper "github.com/loka-network/loka/v1/x/epochs/keeper"
+	epochstypes "github.com/loka-network/loka/v1/x/epochs/types"
+	"github.com/loka-network/loka/v1/x/erc20"
+	erc20client "github.com/loka-network/loka/v1/x/erc20/client"
+	erc20keeper "github.com/loka-network/loka/v1/x/erc20/keeper"
+	erc20types "github.com/loka-network/loka/v1/x/erc20/types"
+	"github.com/loka-network/loka/v1/x/inflation"
+	inflationkeeper "github.com/loka-network/loka/v1/x/inflation/keeper"
+	inflationtypes "github.com/loka-network/loka/v1/x/inflation/types"
+	"github.com/loka-network/loka/v1/x/vesting"
+	vestingkeeper "github.com/loka-network/loka/v1/x/vesting/keeper"
+	vestingtypes "github.com/loka-network/loka/v1/x/vesting/types"
 
 	consensusparamkeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 	consensusparamtypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
 
 	// NOTE: override ICS20 keeper to support IBC transfers of ERC20 tokens
-	"github.com/hetu-project/hetu/v1/x/ibc/transfer"
-	transferkeeper "github.com/hetu-project/hetu/v1/x/ibc/transfer/keeper"
+	"github.com/loka-network/loka/v1/x/ibc/transfer"
+	transferkeeper "github.com/loka-network/loka/v1/x/ibc/transfer/keeper"
 
 	// memiavlstore "github.com/crypto-org-chain/cronos/store"
 
@@ -192,7 +192,7 @@ func init() {
 		panic(err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".hetud")
+	DefaultNodeHome = filepath.Join(userHomeDir, ".lokad")
 
 	// manually update the power reduction by replacing micro (u) -> atto (a) evmos
 	sdk.DefaultPowerReduction = evmostypes.PowerReduction
@@ -204,7 +204,7 @@ func init() {
 }
 
 // Name defines the application binary name
-const Name = "hetud"
+const Name = "lokad"
 
 var (
 	// DefaultNodeHome default home directories for the application daemon

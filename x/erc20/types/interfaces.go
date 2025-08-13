@@ -29,8 +29,8 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/vm"
 
-	"github.com/hetu-project/hetu/v1/x/evm/statedb"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/x/evm/statedb"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 // AccountKeeper defines the expected interface needed to retrieve account info.

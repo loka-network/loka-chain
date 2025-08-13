@@ -28,14 +28,14 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	ibcante "github.com/cosmos/ibc-go/v8/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
-	anteutils "github.com/hetu-project/hetu/v1/app/ante/utils"
+	anteutils "github.com/loka-network/loka/v1/app/ante/utils"
 
-	cosmosante "github.com/hetu-project/hetu/v1/app/ante/cosmos"
-	evmante "github.com/hetu-project/hetu/v1/app/ante/evm"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	cosmosante "github.com/loka-network/loka/v1/app/ante/cosmos"
+	evmante "github.com/loka-network/loka/v1/app/ante/evm"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 
 	sdkvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-	vestingtypes "github.com/hetu-project/hetu/v1/x/vesting/types"
+	vestingtypes "github.com/loka-network/loka/v1/x/vesting/types"
 )
 
 // HandlerOptions defines the list of module keepers required to run the Evmos

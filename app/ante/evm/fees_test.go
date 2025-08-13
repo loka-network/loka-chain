@@ -8,10 +8,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	evmante "github.com/hetu-project/hetu/v1/app/ante/evm"
-	"github.com/hetu-project/hetu/v1/testutil"
-	testutiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	evmante "github.com/loka-network/loka/v1/app/ante/evm"
+	"github.com/loka-network/loka/v1/testutil"
+	testutiltx "github.com/loka-network/loka/v1/testutil/tx"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 var execTypes = []struct {
@@ -56,8 +56,8 @@ func (suite *AnteTestSuite) TestEthMinGasPriceDecorator() {
 				err := suite.app.FeeMarketKeeper.SetParams(suite.ctx, params)
 				suite.Require().NoError(err)
 				testMsg := banktypes.MsgSend{
-					FromAddress: "hetu1x8fhpj9nmhqk8z9kpgjt95ck2xwyue0pucafnk",
-					ToAddress:   "hetu1dx67l23hz9l0k9hcher8xz04uj7wf3yuaq5l0y",
+					FromAddress: "loka1x8fhpj9nmhqk8z9kpgjt95ck2xwyue0pg6wzuz",
+					ToAddress:   "loka1dx67l23hz9l0k9hcher8xz04uj7wf3yufz85qs",
 					Amount:      sdk.Coins{sdk.Coin{Amount: sdkmath.NewInt(10), Denom: denom}},
 				}
 				txBuilder := suite.CreateTestCosmosTxBuilder(sdkmath.NewInt(0), denom, &testMsg)

@@ -25,8 +25,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	clientkeys "github.com/hetu-project/hetu/v1/client/keys"
-	"github.com/hetu-project/hetu/v1/crypto/hd"
+	clientkeys "github.com/loka-network/loka/v1/client/keys"
+	"github.com/loka-network/loka/v1/crypto/hd"
 )
 
 // KeyCommands registers a sub-tree of commands to interact with

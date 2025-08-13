@@ -24,7 +24,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/hetu-project/hetu/v1/x/inflation/types"
+	"github.com/loka-network/loka/v1/x/inflation/types"
 )
 
 // GetQueryCmd returns the cli query commands for the inflation module.

@@ -20,19 +20,19 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/hetu-project/hetu/v1/app"
-	cosmosante "github.com/hetu-project/hetu/v1/app/ante/cosmos"
-	evmante "github.com/hetu-project/hetu/v1/app/ante/evm"
-	"github.com/hetu-project/hetu/v1/contracts"
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/testutil"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	evmostypes "github.com/hetu-project/hetu/v1/types"
-	"github.com/hetu-project/hetu/v1/utils"
-	epochstypes "github.com/hetu-project/hetu/v1/x/epochs/types"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
-	"github.com/hetu-project/hetu/v1/x/vesting/types"
+	"github.com/loka-network/loka/v1/app"
+	cosmosante "github.com/loka-network/loka/v1/app/ante/cosmos"
+	evmante "github.com/loka-network/loka/v1/app/ante/evm"
+	"github.com/loka-network/loka/v1/contracts"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/testutil"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	evmostypes "github.com/loka-network/loka/v1/types"
+	"github.com/loka-network/loka/v1/utils"
+	epochstypes "github.com/loka-network/loka/v1/x/epochs/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/x/vesting/types"
 
 	"github.com/stretchr/testify/require"
 )
@@ -57,7 +57,7 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 
 	// Set Context
 	header := testutil.NewHeader(
-		1, time.Now().UTC(), "hetu_560001-1", suite.consAddress, nil, nil,
+		1, time.Now().UTC(), "loka_567001-1", suite.consAddress, nil, nil,
 	)
 	suite.ctx = suite.app.BaseApp.NewContextLegacy(false, header)
 	suite.ctx = suite.ctx.WithBlockGasMeter(storetypes.NewGasMeter(math.MaxUint64))
@@ -222,7 +222,7 @@ func delegate(clawbackAccount *types.ClawbackVestingAccount, amount sdkmath.Int)
 	addr, err := sdk.AccAddressFromBech32(clawbackAccount.Address)
 	s.Require().NoError(err)
 
-	val, err := sdk.ValAddressFromBech32("hetuvaloper1z3t55m0l9h0eupuz3dp5t5cypyv674jjfcsegw")
+	val, err := sdk.ValAddressFromBech32("lokavaloper1z3t55m0l9h0eupuz3dp5t5cypyv674jj7rn7e8")
 	s.Require().NoError(err)
 	delegateMsg := stakingtypes.NewMsgDelegate(addr.String(), val.String(), sdk.NewCoin(utils.BaseDenom, amount))
 

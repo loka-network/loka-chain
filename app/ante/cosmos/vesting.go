@@ -23,8 +23,8 @@ import (
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
-	vestingtypes "github.com/hetu-project/hetu/v1/x/vesting/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
+	vestingtypes "github.com/loka-network/loka/v1/x/vesting/types"
 )
 
 // TODO: remove once Cosmos SDK is upgraded to v0.46

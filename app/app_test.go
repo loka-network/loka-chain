@@ -21,8 +21,8 @@ import (
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/utils"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/utils"
 )
 
 func TestEvmosExport(t *testing.T) {

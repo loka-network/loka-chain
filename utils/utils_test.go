@@ -12,7 +12,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/hetu-project/hetu/v1/crypto/ethsecp256k1"
+	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
 )
 
 func init() {
@@ -88,32 +88,32 @@ func TestGetEvmosAddressFromBech32(t *testing.T) {
 		},
 		{
 			"invalid bech32 address",
-			"hetu",
+			"loka",
 			"",
 			true,
 		},
 		{
 			"invalid address bytes",
-			"hetu1123",
+			"loka1123",
 			"",
 			true,
 		},
 		{
 			"evmos address",
-			"hetu1qql8ag4cluz6r4dz28p3w00dnc9w8ueua22a5q",
-			"hetu1qql8ag4cluz6r4dz28p3w00dnc9w8ueua22a5q",
+			"loka1qql8ag4cluz6r4dz28p3w00dnc9w8ueu73rc9n",
+			"loka1qql8ag4cluz6r4dz28p3w00dnc9w8ueu73rc9n",
 			false,
 		},
 		{
 			"cosmos address",
 			"cosmos1qql8ag4cluz6r4dz28p3w00dnc9w8ueulg2gmc",
-			"hetu1qql8ag4cluz6r4dz28p3w00dnc9w8ueua22a5q",
+			"loka1qql8ag4cluz6r4dz28p3w00dnc9w8ueu73rc9n",
 			false,
 		},
 		{
 			"osmosis address",
 			"osmo1qql8ag4cluz6r4dz28p3w00dnc9w8ueuhnecd2",
-			"hetu1qql8ag4cluz6r4dz28p3w00dnc9w8ueua22a5q",
+			"loka1qql8ag4cluz6r4dz28p3w00dnc9w8ueu73rc9n",
 			false,
 		},
 	}
@@ -137,7 +137,7 @@ func TestEvmosCoinDenom(t *testing.T) {
 	}{
 		{
 			"valid denom - native coin",
-			"ahetu",
+			"aloka",
 			false,
 		},
 		{

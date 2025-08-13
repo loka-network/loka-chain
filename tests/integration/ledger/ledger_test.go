@@ -9,11 +9,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 
-	"github.com/hetu-project/hetu/v1/crypto/hd"
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/tests/integration/ledger/mocks"
-	"github.com/hetu-project/hetu/v1/testutil"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/crypto/hd"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/tests/integration/ledger/mocks"
+	"github.com/loka-network/loka/v1/testutil"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
 
 	"github.com/spf13/cobra"
 
@@ -175,7 +175,7 @@ var _ = Describe("Ledger CLI and keyring functionality: ", func() {
 						s.app.BankKeeper,
 						s.accAddr,
 						sdk.NewCoins(
-							sdk.NewCoin("ahetu", math.NewInt(100000000000000)),
+							sdk.NewCoin("aloka", math.NewInt(100000000000000)),
 						),
 					)
 					s.Require().NoError(err)
@@ -200,7 +200,7 @@ var _ = Describe("Ledger CLI and keyring functionality: ", func() {
 					cmd.SetArgs([]string{
 						ledgerKey,
 						receiverAccAddr.String(),
-						sdk.NewCoin("ahetu", math.NewInt(1000)).String(),
+						sdk.NewCoin("aloka", math.NewInt(1000)).String(),
 						s.FormatFlag(flags.FlagUseLedger),
 						s.FormatFlag(flags.FlagSkipConfirmation),
 					})
@@ -218,7 +218,7 @@ var _ = Describe("Ledger CLI and keyring functionality: ", func() {
 					cmd.SetArgs([]string{
 						ledgerKey,
 						receiverAccAddr.String(),
-						sdk.NewCoin("ahetu", math.NewInt(1000)).String(),
+						sdk.NewCoin("aloka", math.NewInt(1000)).String(),
 						s.FormatFlag(flags.FlagUseLedger),
 						s.FormatFlag(flags.FlagSkipConfirmation),
 					})

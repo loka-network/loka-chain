@@ -8,12 +8,12 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
-	"github.com/hetu-project/hetu/v1/app/ante/evm"
-	"github.com/hetu-project/hetu/v1/testutil"
-	utiltx "github.com/hetu-project/hetu/v1/testutil/tx"
-	"github.com/hetu-project/hetu/v1/types"
-	"github.com/hetu-project/hetu/v1/utils"
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/app/ante/evm"
+	"github.com/loka-network/loka/v1/testutil"
+	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/types"
+	"github.com/loka-network/loka/v1/utils"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 func (suite *AnteTestSuite) TestGasWantedDecorator() {
@@ -35,8 +35,8 @@ func (suite *AnteTestSuite) TestGasWantedDecorator() {
 			func() sdk.Tx {
 				denom := evmtypes.DefaultEVMDenom
 				testMsg := banktypes.MsgSend{
-					FromAddress: "hetu1x8fhpj9nmhqk8z9kpgjt95ck2xwyue0pucafnk",
-					ToAddress:   "hetu1dx67l23hz9l0k9hcher8xz04uj7wf3yuaq5l0y",
+					FromAddress: "loka1x8fhpj9nmhqk8z9kpgjt95ck2xwyue0pg6wzuz",
+					ToAddress:   "loka1dx67l23hz9l0k9hcher8xz04uj7wf3yufz85qs",
 					Amount:      sdk.Coins{sdk.Coin{Amount: sdkmath.NewInt(10), Denom: denom}},
 				}
 				txBuilder := suite.CreateTestCosmosTxBuilder(sdkmath.NewInt(10), utils.BaseDenom, &testMsg)
@@ -94,8 +94,8 @@ func (suite *AnteTestSuite) TestGasWantedDecorator() {
 			func() sdk.Tx {
 				denom := evmtypes.DefaultEVMDenom
 				testMsg := banktypes.MsgSend{
-					FromAddress: "hetu1x8fhpj9nmhqk8z9kpgjt95ck2xwyue0pucafnk",
-					ToAddress:   "hetu1dx67l23hz9l0k9hcher8xz04uj7wf3yuaq5l0y",
+					FromAddress: "loka1x8fhpj9nmhqk8z9kpgjt95ck2xwyue0pg6wzuz",
+					ToAddress:   "loka1dx67l23hz9l0k9hcher8xz04uj7wf3yufz85qs",
 					Amount:      sdk.Coins{sdk.Coin{Amount: sdkmath.NewInt(10), Denom: denom}},
 				}
 				txBuilder := suite.CreateTestCosmosTxBuilder(sdkmath.NewInt(10), utils.BaseDenom, &testMsg)

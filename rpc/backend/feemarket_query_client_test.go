@@ -2,9 +2,9 @@ package backend
 
 import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/hetu-project/hetu/v1/rpc/backend/mocks"
-	rpc "github.com/hetu-project/hetu/v1/rpc/types"
-	feemarkettypes "github.com/hetu-project/hetu/v1/x/feemarket/types"
+	"github.com/loka-network/loka/v1/rpc/backend/mocks"
+	rpc "github.com/loka-network/loka/v1/rpc/types"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
 )
 
 var _ feemarkettypes.QueryClient = &mocks.FeeMarketQueryClient{}

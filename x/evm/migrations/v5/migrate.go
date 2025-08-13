@@ -19,9 +19,9 @@ import (
 	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/hetu-project/hetu/v1/x/evm/types"
+	"github.com/loka-network/loka/v1/x/evm/types"
 
-	v5types "github.com/hetu-project/hetu/v1/x/evm/migrations/v5/types"
+	v5types "github.com/loka-network/loka/v1/x/evm/migrations/v5/types"
 )
 
 // MigrateStore migrates the x/evm module state from the consensus version 4 to
@@ -47,7 +47,7 @@ func MigrateStore(
 	cdc.MustUnmarshal(extraEIPsBz, &extraEIPs)
 
 	// revert ExtraEIP change for Evmos testnet
-	if ctx.ChainID() == "hetu_560000-4" {
+	if ctx.ChainID() == "loka_567000-4" {
 		extraEIPs.EIPs = []int64{}
 	}
 

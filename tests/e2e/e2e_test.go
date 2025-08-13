@@ -25,7 +25,7 @@ func (s *IntegrationTestSuite) TestUpgrade() {
 	s.T().Logf("SUCCESS")
 }
 
-// TestCLITxs executes different types of transactions against an Hetu node
+// TestCLITxs executes different types of transactions against an Loka node
 // using the CLI client. The node used for the test has the latest changes introduced.
 func (s *IntegrationTestSuite) TestCLITxs() {
 	// start a node
@@ -45,8 +45,8 @@ func (s *IntegrationTestSuite) TestCLITxs() {
 					s.upgradeParams.ChainID,
 					5000,
 					true,
-					"--fees=5000000000ahetu",
-					"--gas-prices=50000ahetu",
+					"--fees=5000000000aloka",
+					"--gas-prices=50000aloka",
 				)
 			},
 			expPass:   false,
@@ -74,7 +74,7 @@ func (s *IntegrationTestSuite) TestCLITxs() {
 					s.upgradeParams.ChainID,
 					5000,
 					true,
-					"--fees=10ahetu",
+					"--fees=10aloka",
 					"--gas=50000",
 				)
 			},
@@ -89,7 +89,7 @@ func (s *IntegrationTestSuite) TestCLITxs() {
 					s.upgradeParams.ChainID,
 					5000,
 					true,
-					"--fees=500000000000ahetu",
+					"--fees=500000000000aloka",
 					"--gas=1000",
 				)
 			},
@@ -104,7 +104,7 @@ func (s *IntegrationTestSuite) TestCLITxs() {
 					s.upgradeParams.ChainID,
 					5000,
 					true,
-					"--fees=10000000000000000ahetu",
+					"--fees=10000000000000000aloka",
 					"--gas=1500000",
 				)
 			},
@@ -118,7 +118,7 @@ func (s *IntegrationTestSuite) TestCLITxs() {
 					s.upgradeParams.ChainID,
 					5000,
 					true,
-					"--gas-prices=1000000000ahetu",
+					"--gas-prices=1000000000aloka",
 					"--gas=1500000",
 				)
 			},
@@ -130,7 +130,7 @@ func (s *IntegrationTestSuite) TestCLITxs() {
 				return s.upgradeManager.CreateVoteProposalExec(
 					s.upgradeParams.ChainID,
 					1,
-					"--fees=10ahetu",
+					"--fees=10aloka",
 					"--gas=500000",
 				)
 			},
@@ -145,7 +145,7 @@ func (s *IntegrationTestSuite) TestCLITxs() {
 					1,
 					"--gas=auto",
 					"--gas-adjustment=1.5",
-					"--fees=10000000000000000ahetu",
+					"--fees=10000000000000000aloka",
 				)
 			},
 			expPass: true,

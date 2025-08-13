@@ -19,7 +19,7 @@ import (
 	"math/big"
 
 	"cosmossdk.io/math"
-	"github.com/hetu-project/hetu/v1/x/feemarket/types"
+	"github.com/loka-network/loka/v1/x/feemarket/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

@@ -11,12 +11,12 @@ import (
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 	ibctesting "github.com/cosmos/ibc-go/v8/testing"
-	teststypes "github.com/hetu-project/hetu/v1/types/tests"
+	teststypes "github.com/loka-network/loka/v1/types/tests"
 )
 
 func init() {
 	cfg := sdk.GetConfig()
-	cfg.SetBech32PrefixForAccount("hetu", "hetupub")
+	cfg.SetBech32PrefixForAccount("loka", "lokapub")
 }
 
 func TestGetTransferSenderRecipient(t *testing.T) {
@@ -57,7 +57,7 @@ func TestGetTransferSenderRecipient(t *testing.T) {
 				Data: transfertypes.ModuleCdc.MustMarshalJSON(
 					&transfertypes.FungibleTokenPacketData{
 						Sender:   "cosmos1",
-						Receiver: "hetu1x2w87cvt5mqjncav4lxy8yfreynn273xnhq2pu",
+						Receiver: "loka1x2w87cvt5mqjncav4lxy8yfreynn273xsvf0s0",
 						Amount:   "123456",
 					},
 				),
@@ -71,7 +71,7 @@ func TestGetTransferSenderRecipient(t *testing.T) {
 				Data: transfertypes.ModuleCdc.MustMarshalJSON(
 					&transfertypes.FungibleTokenPacketData{
 						Sender:   "cosmos1qql8ag4cluz6r4dz28p3w00dnc9w8ueulg2gmc",
-						Receiver: "hetu1",
+						Receiver: "loka1",
 						Amount:   "123456",
 					},
 				),
@@ -85,13 +85,13 @@ func TestGetTransferSenderRecipient(t *testing.T) {
 				Data: transfertypes.ModuleCdc.MustMarshalJSON(
 					&transfertypes.FungibleTokenPacketData{
 						Sender:   "cosmos1qql8ag4cluz6r4dz28p3w00dnc9w8ueulg2gmc",
-						Receiver: "hetu1x2w87cvt5mqjncav4lxy8yfreynn273xnhq2pu",
+						Receiver: "loka1x2w87cvt5mqjncav4lxy8yfreynn273xsvf0s0",
 						Amount:   "123456",
 					},
 				),
 			},
-			"hetu1qql8ag4cluz6r4dz28p3w00dnc9w8ueua22a5q",
-			"hetu1x2w87cvt5mqjncav4lxy8yfreynn273xnhq2pu",
+			"loka1qql8ag4cluz6r4dz28p3w00dnc9w8ueu73rc9n",
+			"loka1x2w87cvt5mqjncav4lxy8yfreynn273xsvf0s0",
 			false,
 		},
 		{
@@ -99,14 +99,14 @@ func TestGetTransferSenderRecipient(t *testing.T) {
 			channeltypes.Packet{
 				Data: transfertypes.ModuleCdc.MustMarshalJSON(
 					&transfertypes.FungibleTokenPacketData{
-						Sender:   "hetu1x2w87cvt5mqjncav4lxy8yfreynn273xnhq2pu",
+						Sender:   "loka1x2w87cvt5mqjncav4lxy8yfreynn273xsvf0s0",
 						Receiver: "cosmos1qql8ag4cluz6r4dz28p3w00dnc9w8ueulg2gmc",
 						Amount:   "123456",
 					},
 				),
 			},
-			"hetu1x2w87cvt5mqjncav4lxy8yfreynn273xnhq2pu",
-			"hetu1qql8ag4cluz6r4dz28p3w00dnc9w8ueua22a5q",
+			"loka1x2w87cvt5mqjncav4lxy8yfreynn273xsvf0s0",
+			"loka1qql8ag4cluz6r4dz28p3w00dnc9w8ueu73rc9n",
 			false,
 		},
 		{
@@ -115,13 +115,13 @@ func TestGetTransferSenderRecipient(t *testing.T) {
 				Data: transfertypes.ModuleCdc.MustMarshalJSON(
 					&transfertypes.FungibleTokenPacketData{
 						Sender:   "osmo1qql8ag4cluz6r4dz28p3w00dnc9w8ueuhnecd2",
-						Receiver: "hetu1x2w87cvt5mqjncav4lxy8yfreynn273xnhq2pu",
+						Receiver: "loka1x2w87cvt5mqjncav4lxy8yfreynn273xsvf0s0",
 						Amount:   "123456",
 					},
 				),
 			},
-			"hetu1qql8ag4cluz6r4dz28p3w00dnc9w8ueua22a5q",
-			"hetu1x2w87cvt5mqjncav4lxy8yfreynn273xnhq2pu",
+			"loka1qql8ag4cluz6r4dz28p3w00dnc9w8ueu73rc9n",
+			"loka1x2w87cvt5mqjncav4lxy8yfreynn273xsvf0s0",
 			false,
 		},
 	}
@@ -165,7 +165,7 @@ func TestGetTransferAmount(t *testing.T) {
 				Data: transfertypes.ModuleCdc.MustMarshalJSON(
 					&transfertypes.FungibleTokenPacketData{
 						Sender:   "cosmos1qql8ag4cluz6r4dz28p3w00dnc9w8ueulg2gmc",
-						Receiver: "hetu1x2w87cvt5mqjncav4lxy8yfreynn273xnhq2pu",
+						Receiver: "loka1x2w87cvt5mqjncav4lxy8yfreynn273xsvf0s0",
 						Amount:   "",
 					},
 				),
@@ -179,7 +179,7 @@ func TestGetTransferAmount(t *testing.T) {
 				Data: transfertypes.ModuleCdc.MustMarshalJSON(
 					&transfertypes.FungibleTokenPacketData{
 						Sender:   "cosmos1qql8ag4cluz6r4dz28p3w00dnc9w8ueulg2gmc",
-						Receiver: "hetu1x2w87cvt5mqjncav4lxy8yfreynn273xnhq2pu",
+						Receiver: "loka1x2w87cvt5mqjncav4lxy8yfreynn273xsvf0s0",
 						Amount:   "test",
 					},
 				),
@@ -193,7 +193,7 @@ func TestGetTransferAmount(t *testing.T) {
 				Data: transfertypes.ModuleCdc.MustMarshalJSON(
 					&transfertypes.FungibleTokenPacketData{
 						Sender:   "cosmos1qql8ag4cluz6r4dz28p3w00dnc9w8ueulg2gmc",
-						Receiver: "hetu1x2w87cvt5mqjncav4lxy8yfreynn273xnhq2pu",
+						Receiver: "loka1x2w87cvt5mqjncav4lxy8yfreynn273xsvf0s0",
 						Amount:   "10000",
 					},
 				),
@@ -241,9 +241,9 @@ func TestGetReceivedCoin(t *testing.T) {
 			"channel-0",
 			"transfer",
 			"channel-0",
-			"transfer/channel-0/ahetu",
+			"transfer/channel-0/aloka",
 			"10",
-			sdk.Coin{Denom: "ahetu", Amount: math.NewInt(10)},
+			sdk.Coin{Denom: "aloka", Amount: math.NewInt(10)},
 		},
 		{
 			"transfer 2x ibc wrapped coin to destination which is its source",
@@ -281,14 +281,14 @@ func TestGetSentCoin(t *testing.T) {
 		expCoin   sdk.Coin
 	}{
 		{
-			"get unwrapped ahetu coin",
-			"ahetu",
+			"get unwrapped aloka coin",
+			"aloka",
 			"10",
-			sdk.Coin{Denom: "ahetu", Amount: math.NewInt(10)},
+			sdk.Coin{Denom: "aloka", Amount: math.NewInt(10)},
 		},
 		{
-			"get ibc wrapped ahetu coin",
-			"transfer/channel-0/ahetu",
+			"get ibc wrapped aloka coin",
+			"transfer/channel-0/aloka",
 			"10",
 			sdk.Coin{Denom: teststypes.AevmosIbcdenom, Amount: math.NewInt(10)},
 		},

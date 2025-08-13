@@ -22,7 +22,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/vm"
 
-	evmtypes "github.com/hetu-project/hetu/v1/x/evm/types"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 // ExtStateDB defines an extension to the interface provided by the go-ethereum
@@ -44,7 +44,7 @@ type Keeper interface {
 	SubBalance(ctx sdk.Context, addr sdk.AccAddress, coins sdk.Coins) error
 	SetBalance(ctx sdk.Context, addr common.Address, amount *big.Int) error
 	GetBalance(ctx sdk.Context, addr common.Address) *big.Int
-	
+
 	// Read methods
 	GetAccount(ctx sdk.Context, addr common.Address) *Account
 	GetState(ctx sdk.Context, addr common.Address, key common.Hash) common.Hash

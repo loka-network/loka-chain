@@ -11,10 +11,10 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/hetu-project/hetu/v1/server/config"
-	"github.com/hetu-project/hetu/v1/testutil/network"
+	"github.com/loka-network/loka/v1/server/config"
+	"github.com/loka-network/loka/v1/testutil/network"
 
-	evmosnetwork "github.com/hetu-project/hetu/v1/testutil/network"
+	evmosnetwork "github.com/loka-network/loka/v1/testutil/network"
 )
 
 type IntegrationTestSuite struct {

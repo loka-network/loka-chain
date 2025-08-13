@@ -98,8 +98,8 @@ These scripts will help you set up and run the LOKA Chain on a remote server.
 The following chat channels and forums are a great spot to ask questions about LOKA Chain:
 
 - [Open an Issue](https://github.com/loka-network/loka-chain/issues)
-- [LOKA Protocol](https://loka.network)
-- [Follow us on Twitter](https://twitter.com/loka_network)
+- [LOKA Protocol](https://www.lokachain.org/)
+- [Follow us on Twitter](https://x.com/lokachain)
 
 ## Contributing
 
@@ -115,7 +115,7 @@ For additional instructions, standards and style guides, please refer to the [Co
 ## Support
 
 If you have any questions or need support, please:
-1. Check our [documentation](https://docs.loka.network)
+1. Check our [documentation](https://www.lokachain.org/docs)
 2. Open an issue on GitHub
 3. Join our community discussions
 

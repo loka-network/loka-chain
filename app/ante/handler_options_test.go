@@ -1,11 +1,11 @@
 package ante_test
 
 import (
-	ethante "github.com/hetu-project/hetu/v1/app/ante/evm"
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/types"
+	ethante "github.com/loka-network/loka/v1/app/ante/evm"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/types"
 
-	"github.com/hetu-project/hetu/v1/app/ante"
+	"github.com/loka-network/loka/v1/app/ante"
 )
 
 func (suite *AnteTestSuite) TestValidateHandlerOptions() {

@@ -61,25 +61,25 @@ import (
 
 	rosettaCmd "github.com/cosmos/rosetta/cmd"
 
-	evmosclient "github.com/hetu-project/hetu/v1/client"
-	"github.com/hetu-project/hetu/v1/client/debug"
-	"github.com/hetu-project/hetu/v1/encoding"
-	"github.com/hetu-project/hetu/v1/ethereum/eip712"
-	evmosserver "github.com/hetu-project/hetu/v1/server"
-	servercfg "github.com/hetu-project/hetu/v1/server/config"
-	srvflags "github.com/hetu-project/hetu/v1/server/flags"
+	evmosclient "github.com/loka-network/loka/v1/client"
+	"github.com/loka-network/loka/v1/client/debug"
+	"github.com/loka-network/loka/v1/encoding"
+	"github.com/loka-network/loka/v1/ethereum/eip712"
+	evmosserver "github.com/loka-network/loka/v1/server"
+	servercfg "github.com/loka-network/loka/v1/server/config"
+	srvflags "github.com/loka-network/loka/v1/server/flags"
 
-	"github.com/hetu-project/hetu/v1/app"
-	cmdcfg "github.com/hetu-project/hetu/v1/cmd/config"
-	evmoskr "github.com/hetu-project/hetu/v1/crypto/keyring"
-	"github.com/hetu-project/hetu/v1/utils"
+	"github.com/loka-network/loka/v1/app"
+	cmdcfg "github.com/loka-network/loka/v1/cmd/config"
+	evmoskr "github.com/loka-network/loka/v1/crypto/keyring"
+	"github.com/loka-network/loka/v1/utils"
 )
 
 const (
-	EnvPrefix = "HETU"
+	EnvPrefix = "LOKA"
 )
 
-// NewRootCmd creates a new root command for hetud. It is called once in the
+// NewRootCmd creates a new root command for lokad. It is called once in the
 // main function.
 func NewRootCmd() (*cobra.Command, sdktestutil.TestEncodingConfig) {
 	tempApp := app.NewEvmos(
@@ -115,7 +115,7 @@ func NewRootCmd() (*cobra.Command, sdktestutil.TestEncodingConfig) {
 
 	rootCmd := &cobra.Command{
 		Use:   app.Name,
-		Short: "Hetu Daemon",
+		Short: "Loka Daemon",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())
