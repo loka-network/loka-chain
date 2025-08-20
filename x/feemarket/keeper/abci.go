@@ -16,7 +16,6 @@
 package keeper
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/loka-network/loka/v1/x/feemarket/types"
@@ -25,6 +24,7 @@ import (
 	sdkmath "cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	evmostypes "github.com/loka-network/loka/v1/types"
 )
 
 // BeginBlock updates base fee
@@ -56,22 +56,14 @@ func (k *Keeper) BeginBlock(ctx sdk.Context) error {
 // The EVM end block logic doesn't update the validator set, thus it returns
 // an empty slice.
 func (k *Keeper) EndBlock(ctx sdk.Context) error {
-	if ctx.BlockGasMeter() == nil {
-		k.Logger(ctx).Error("block gas meter is nil when setting block gas wanted")
-		return errors.New("block gas meter is nil when setting block gas wanted")
+	gasWanted := ctx.BlockGasWanted()
+	gw, err := evmostypes.SafeInt64(gasWanted)
+	if err != nil {
+		return err
 	}
-
-	gasWanted := sdkmath.NewIntFromUint64(k.GetTransientGasWanted(ctx))
-	gasUsed := sdkmath.NewIntFromUint64(ctx.BlockGasMeter().GasConsumedToLimit())
-
-	if !gasWanted.IsInt64() {
-		k.Logger(ctx).Error("integer overflow by integer type conversion. Gas wanted > MaxInt64", "gas wanted", gasWanted.String())
-		return errors.New("integer overflow by integer type conversion. Gas wanted > MaxInt64")
-	}
-
-	if !gasUsed.IsInt64() {
-		k.Logger(ctx).Error("integer overflow by integer type conversion. Gas used > MaxInt64", "gas used", gasUsed.String())
-		return errors.New("integer overflow by integer type conversion. Gas used > MaxInt64")
+	gasUsed, err := evmostypes.SafeInt64(ctx.BlockGasUsed())
+	if err != nil {
+		return err
 	}
 
 	// to prevent BaseFee manipulation we limit the gasWanted so that
@@ -81,8 +73,8 @@ func (k *Keeper) EndBlock(ctx sdk.Context) error {
 	minGasMultiplier := k.GetParams(ctx).MinGasMultiplier
 	// minGasPrice := k.GetParams(ctx).MinGasPrice
 	// println("minGasPrice: ", minGasPrice.String())
-	limitedGasWanted := math.LegacyNewDec(gasWanted.Int64()).Mul(minGasMultiplier)
-	updatedGasWanted := sdkmath.LegacyMaxDec(limitedGasWanted, math.LegacyNewDec(gasUsed.Int64())).TruncateInt().Uint64()
+	limitedGasWanted := math.LegacyNewDec(gw).Mul(minGasMultiplier)
+	updatedGasWanted := sdkmath.LegacyMaxDec(limitedGasWanted, math.LegacyNewDec(gasUsed)).TruncateInt().Uint64()
 	k.SetBlockGasWanted(ctx, updatedGasWanted)
 
 	defer func() {

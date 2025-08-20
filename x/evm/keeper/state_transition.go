@@ -194,15 +194,6 @@ func (k *Keeper) ApplyTransaction(ctx sdk.Context, tx *ethtypes.Transaction) (*t
 		// bloomReceipt = ethtypes.BytesToBloom(bloom.Bytes())
 	}
 
-	cumulativeGasUsed := res.GasUsed
-	if ctx.BlockGasMeter() != nil {
-		limit := ctx.BlockGasMeter().Limit()
-		cumulativeGasUsed += ctx.BlockGasMeter().GasConsumed()
-		if cumulativeGasUsed > limit {
-			cumulativeGasUsed = limit
-		}
-	}
-
 	var contractAddr common.Address
 	if msg.To() == nil {
 		contractAddr = crypto.CreateAddress(msg.From(), msg.Nonce())
@@ -211,7 +202,6 @@ func (k *Keeper) ApplyTransaction(ctx sdk.Context, tx *ethtypes.Transaction) (*t
 	receipt := &ethtypes.Receipt{
 		Type:              tx.Type(),
 		PostState:         nil, // TODO: intermediate state root
-		CumulativeGasUsed: cumulativeGasUsed,
 		// Bloom:             bloomReceipt,
 		Logs:              logs,
 		TxHash:            txConfig.TxHash,

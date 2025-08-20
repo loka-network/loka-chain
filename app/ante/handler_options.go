@@ -111,7 +111,8 @@ func newEVMAnteHandler(options HandlerOptions) sdk.AnteHandler {
 		evmante.NewEthVestingTransactionDecorator(options.AccountKeeper, options.BankKeeper, options.EvmKeeper),
 		evmante.NewEthGasConsumeDecorator(options.BankKeeper, options.DistributionKeeper, options.EvmKeeper, options.StakingKeeper, options.MaxTxGasWanted),
 		evmante.NewEthIncrementSenderSequenceDecorator(options.AccountKeeper),
-		evmante.NewGasWantedDecorator(options.EvmKeeper, options.FeeMarketKeeper),
+		// move to checks total gas-wanted against block gas limit in process proposal
+		// evmante.NewGasWantedDecorator(options.EvmKeeper, options.FeeMarketKeeper),
 		// emit eth tx hash and index at the very last ante handler. (repeated in the PatchTxResponses)
 		// evmante.NewEthEmitEventDecorator(options.EvmKeeper),
 	)
@@ -141,7 +142,7 @@ func newCosmosAnteHandler(options HandlerOptions) sdk.AnteHandler {
 		ante.NewSigVerificationDecorator(options.AccountKeeper, options.SignModeHandler),
 		ante.NewIncrementSequenceDecorator(options.AccountKeeper),
 		ibcante.NewRedundantRelayDecorator(options.IBCKeeper),
-		evmante.NewGasWantedDecorator(options.EvmKeeper, options.FeeMarketKeeper),
+		// evmante.NewGasWantedDecorator(options.EvmKeeper, options.FeeMarketKeeper),
 	)
 }
 
@@ -170,6 +171,6 @@ func newLegacyCosmosAnteHandlerEip712(options HandlerOptions) sdk.AnteHandler {
 		cosmosante.NewLegacyEip712SigVerificationDecorator(options.AccountKeeper, options.SignModeHandler),
 		ante.NewIncrementSequenceDecorator(options.AccountKeeper),
 		ibcante.NewRedundantRelayDecorator(options.IBCKeeper),
-		evmante.NewGasWantedDecorator(options.EvmKeeper, options.FeeMarketKeeper),
+		// evmante.NewGasWantedDecorator(options.EvmKeeper, options.FeeMarketKeeper),
 	)
 }

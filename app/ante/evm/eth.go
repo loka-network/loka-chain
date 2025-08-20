@@ -234,6 +234,10 @@ func (egcd EthGasConsumeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simula
 	// from the tx gas pool. The latter only has the value so far since the
 	// EthSetupContextDecorator, so it will never exceed the block gas limit.
 	if gasWanted > blockGasLimit {
+		ctx.Logger().Error("tx gas exceeds block gas limit",
+			"tx gas", gasWanted,
+			"block gas limit", blockGasLimit,
+		)
 		return ctx, errorsmod.Wrapf(
 			errortypes.ErrOutOfGas,
 			"tx gas (%d) exceeds block gas limit (%d)",

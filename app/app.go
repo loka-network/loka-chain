@@ -399,6 +399,7 @@ func NewEvmos(
 	bApp.SetCommitMultiStoreTracer(traceStore)
 	bApp.SetVersion(version.Version)
 	bApp.SetInterfaceRegistry(interfaceRegistry)
+	bApp.SetDisableBlockGasMeter(true)
 
 	keys := storetypes.NewKVStoreKeys(
 		// SDK keys

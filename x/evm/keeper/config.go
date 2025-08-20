@@ -23,9 +23,109 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/vm"
+	"github.com/ethereum/go-ethereum/params"
+	evmostypes "github.com/loka-network/loka/v1/types"
 	"github.com/loka-network/loka/v1/x/evm/statedb"
 	"github.com/loka-network/loka/v1/x/evm/types"
+	feemarkettypes "github.com/loka-network/loka/v1/x/feemarket/types"
 )
+
+// EVMBlockConfig encapsulates the common parameters needed to execute an EVM message,
+// it's cached in object store during the block execution.
+type EVMBlockConfig struct {
+	Params          types.Params
+	FeeMarketParams feemarkettypes.Params
+	ChainConfig     *params.ChainConfig
+	CoinBase        common.Address
+	BaseFee         *big.Int
+	// not supported, always zero
+	Random *common.Hash
+	// unused, always zero
+	Difficulty *big.Int
+	// cache the big.Int version of block number, avoid repeated allocation
+	BlockNumber *big.Int
+	BlockTime   uint64
+	Rules       params.Rules
+}
+
+// EVMConfig encapsulates common parameters needed to create an EVM to execute a message
+// It's mainly to reduce the number of method parameters
+type EVMConfig struct {
+	*EVMBlockConfig
+	TxConfig   statedb.TxConfig
+	Tracer     *vm.EVMLogger
+	DebugTrace bool
+	// Overrides      *rpctypes.StateOverride
+	// BlockOverrides *rpctypes.BlockOverrides
+}
+
+// EVMBlockConfig creates the EVMBlockConfig based on current state
+func (k *Keeper) EVMBlockConfig(ctx sdk.Context, chainID *big.Int) (*EVMBlockConfig, error) {
+	objStore := ctx.ObjectStore(k.objectKey)
+	v := objStore.Get(types.KeyPrefixObjectParams)
+	if v != nil {
+		return v.(*EVMBlockConfig), nil
+	}
+
+	params := k.GetParams(ctx)
+	ethCfg := params.ChainConfig.EthereumConfig(chainID)
+
+	feemarketParams := k.feeMarketKeeper.GetParams(ctx)
+
+	// get the coinbase address from the block proposer
+	proposerAddress := sdk.ConsAddress(ctx.BlockHeader().ProposerAddress)
+	if len(proposerAddress) == 0 {
+		// it's ok that proposer address don't exsits in some contexts like CheckTx.
+		proposerAddress = sdk.ConsAddress(nil)
+	}
+	coinbase, err := k.GetCoinbaseAddress(ctx, proposerAddress)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "failed to obtain coinbase address")
+	}
+
+	var baseFee *big.Int
+	if types.IsLondon(ethCfg, ctx.BlockHeight()) {
+		baseFee = feemarketParams.BaseFee.BigInt()
+		// should not be nil if london hardfork enabled
+		if baseFee == nil {
+			baseFee = new(big.Int)
+		}
+	}
+	time := ctx.BlockHeader().Time
+	var blockTime uint64
+	if !time.IsZero() {
+		blockTime, err = evmostypes.SafeUint64(time.Unix())
+		if err != nil {
+			return nil, err
+		}
+	}
+	blockNumber := big.NewInt(ctx.BlockHeight())
+	rules := ethCfg.Rules(blockNumber, ethCfg.MergeNetsplitBlock != nil)
+
+	var zero common.Hash
+	cfg := &EVMBlockConfig{
+		Params:          params,
+		FeeMarketParams: feemarketParams,
+		ChainConfig:     ethCfg,
+		CoinBase:        coinbase,
+		BaseFee:         baseFee,
+		Difficulty:      big.NewInt(0),
+		Random:          &zero,
+		BlockNumber:     blockNumber,
+		BlockTime:       blockTime,
+		Rules:           rules,
+	}
+	objStore.Set(types.KeyPrefixObjectParams, cfg)
+	return cfg, nil
+}
+
+func (k *Keeper) RemoveParamsCache(ctx sdk.Context) {
+	ctx.ObjectStore(k.objectKey).Delete(types.KeyPrefixObjectParams)
+}
+
+func (cfg EVMConfig) GetTracer() *vm.EVMLogger {
+	return cfg.Tracer
+}
 
 // EVMConfig creates the EVMConfig based on current state
 func (k *Keeper) EVMConfig(ctx sdk.Context, proposerAddress sdk.ConsAddress, chainID *big.Int) (*statedb.EVMConfig, error) {
