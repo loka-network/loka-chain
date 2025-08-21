@@ -19,6 +19,7 @@ DOCKER_TAG := $(COMMIT_HASH)
 # e2e env
 MOUNT_PATH := $(shell pwd)/build/:/root/
 E2E_SKIP_CLEANUP := false
+ROCKSDB_VERSION ?= "9.3.1"
 
 export GO111MODULE = on
 
@@ -77,13 +78,20 @@ endif
 # handle rocksdb
 ifeq (rocksdb,$(findstring rocksdb,$(COSMOS_BUILD_OPTIONS)))
   CGO_ENABLED=1
-  build_tags += rocksdb
+  build_tags += rocksdb grocksdb_clean_link
+  VERSION := $(VERSION)-rocksdb
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=rocksdb
 endif
 # handle boltdb
 ifeq (boltdb,$(findstring boltdb,$(COSMOS_BUILD_OPTIONS)))
   build_tags += boltdb
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=boltdb
+endif
+# handle pebbledb
+ifeq (pebbledb,$(findstring pebbledb,$(COSMOS_BUILD_OPTIONS)))
+  build_tags += pebbledb
+  VERSION := $(VERSION)-pebbledb
+  ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=pebbledb
 endif
 
 # add build tags to linker flags
@@ -154,6 +162,33 @@ build-docker:
 	# move the binaries to the ./build directory
 	mkdir -p ./build/
 	$(DOCKER) cp loka:/usr/bin/lokad ./build/
+
+build-docker-pebbledb:
+	DOCKER_BUILDKIT=1 $(DOCKER) build --build-arg DB_BACKEND=pebbledb -t ${DOCKER_IMAGE}:${DOCKER_TAG}-pebble ${DOCKER_ARGS} .
+	$(DOCKER) tag ${DOCKER_IMAGE}:${DOCKER_TAG}-pebble ${DOCKER_IMAGE}:latest-pebble
+	mkdir -p ./build/.evmosd
+	echo '#!/usr/bin/env bash' > ./build/evmosd
+	echo "IMAGE_NAME=${DOCKER_IMAGE}:${COMMIT_HASH}" >> ./build/evmosd
+	echo 'SCRIPT_PATH=$$(cd $$(dirname $$0) && pwd -P)' >> ./build/evmosd
+	echo 'docker run -it --rm -v $${SCRIPT_PATH}/.evmosd:/home/evmos/.evmosd $$IMAGE_NAME evmosd "$$@"' >> ./build/evmosd
+	chmod +x ./build/evmosd
+
+build-rocksdb:
+	# Make sure to run this command with root permission
+	./scripts/install_librocksdb.sh $(ROCKSDB_VERSION)
+	@UNAME_S=$$(uname -s); \
+	if [ "$$UNAME_S" = "Linux" ]; then \
+		CGO_ENABLED=1 CGO_CFLAGS="-I/usr/include" \
+		CGO_LDFLAGS="-L/usr/lib -lrocksdb -lstdc++ -lm -lz -lbz2 -lsnappy -llz4 -lzstd -ldl" \
+		COSMOS_BUILD_OPTIONS=rocksdb $(MAKE) build install; \
+	elif [ "$$UNAME_S" = "Darwin" ]; then \
+		CGO_ENABLED=1 CGO_CFLAGS="-I/opt/homebrew/include" \
+		CGO_LDFLAGS="-L/opt/homebrew/lib" \
+		COSMOS_BUILD_OPTIONS=rocksdb $(MAKE) build install; \
+	else \
+		echo "Unsupported operating system: $$UNAME_S"; \
+		exit 1; \
+	fi
 
 push-docker: build-docker
 	$(DOCKER) push ${DOCKER_IMAGE}:${DOCKER_TAG}

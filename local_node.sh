@@ -12,7 +12,8 @@ KEYRING="test"
 KEYALGO="eth_secp256k1"
 LOGLEVEL="info"
 # Set dedicated home directory for the lokad instance
-HOMEDIR="$HOME/.tmp-lokad"
+# HOMEDIR="$HOME/.tmp-lokad"
+HOMEDIR="/Users/blake/work/nagara/code/evmos/.vscode/lokad-config"
 # to trace evm
 #TRACE="--trace"
 TRACE=""
@@ -33,8 +34,15 @@ command -v jq >/dev/null 2>&1 || {
 # used to exit on first error (any non-zero exit code)
 set -e
 
+
 # Reinstall daemon
-make install
+if [[ "$COSMOS_BUILD_OPTIONS" == *"rocksdb"* ]]; then
+	export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH
+	export COSMOS_BUILD_OPTIONS=rocksdb
+	make build-rocksdb
+else
+	make install
+fi
 
 # User prompt if an existing local node configuration is found.
 if [ -d "$HOMEDIR" ]; then
@@ -136,6 +144,9 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 
 	# Set mempool size
     sed -i.bak 's/^size = .*/size = 200000/g' "$CONFIG"
+	if [[ "$COSMOS_BUILD_OPTIONS" == *"rocksdb"* ]]; then
+    	sed -i.bak 's/db_backend = "goleveldb"/db_backend = "rocksdb"/g' "$CONFIG"
+	fi 
 
 	# Change proposal periods to pass within a reasonable time for local testing
 	sed -i.bak 's/"max_deposit_period": "172800s"/"max_deposit_period": "30s"/g' "$HOMEDIR"/config/genesis.json
