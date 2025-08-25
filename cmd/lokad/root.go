@@ -44,7 +44,7 @@ import (
 	sdkserver "github.com/cosmos/cosmos-sdk/server"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 
-	"cosmossdk.io/store/snapshots"
+	// "cosmossdk.io/store/snapshots"
 	snapshottypes "cosmossdk.io/store/snapshots/types"
 	storetypes "cosmossdk.io/store/types"
 	confixcmd "cosmossdk.io/tools/confix/cmd"
@@ -60,6 +60,7 @@ import (
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
 	rosettaCmd "github.com/cosmos/rosetta/cmd"
+	memiavlcfg "github.com/crypto-org-chain/cronos/store/config"
 
 	evmosclient "github.com/loka-network/loka/v1/client"
 	"github.com/loka-network/loka/v1/client/debug"
@@ -263,18 +264,31 @@ func txCommand() *cobra.Command {
 // initAppConfig helps to override default appConfig template and configs.
 // return "", nil if no custom configuration is required for the application.
 func initAppConfig() (string, interface{}) {
-	customAppTemplate, customAppConfig := servercfg.AppConfig(cmdcfg.BaseDenom)
+	type CustomAppConfig struct {
+		servercfg.Config
 
-	srvCfg, ok := customAppConfig.(servercfg.Config)
+		MemIAVL   memiavlcfg.MemIAVLConfig `mapstructure:"memiavl"`
+		VersionDB VersionDBConfig          `mapstructure:"versiondb"`
+	}
+
+	customAppTemplate, serverAppConfig := servercfg.AppConfig(cmdcfg.BaseDenom)
+
+	srvCfg, ok := serverAppConfig.(servercfg.Config)
 	if !ok {
-		panic(fmt.Errorf("unknown app config type %T", customAppConfig))
+		panic(fmt.Errorf("unknown app config type %T", serverAppConfig))
 	}
 
 	srvCfg.StateSync.SnapshotInterval = 5000
 	srvCfg.StateSync.SnapshotKeepRecent = 2
 	srvCfg.IAVLDisableFastNode = false
 
-	return customAppTemplate, srvCfg
+	customAppConfig := CustomAppConfig{
+		Config:    srvCfg,
+		MemIAVL:   memiavlcfg.DefaultMemIAVLConfig(),
+		VersionDB: DefaultVersionDBConfig(),
+	}
+
+	return customAppTemplate + memiavlcfg.DefaultConfigTemplate + DefaultVersionDBTemplate, customAppConfig
 }
 
 type appCreator struct {
@@ -300,13 +314,9 @@ func (a appCreator) newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, a
 	}
 
 	home := cast.ToString(appOpts.Get(flags.FlagHome))
-	snapshotDir := filepath.Join(home, "data", "snapshots")
-	snapshotDB, err := dbm.NewDB("metadata", sdkserver.GetAppDBBackend(appOpts), snapshotDir)
-	if err != nil {
-		panic(err)
-	}
 
-	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
+	logger.Info("DB Backend:", appOpts.Get("db_backend").(string))
+	snapshotStore, err := sdkserver.GetSnapshotStore(appOpts)
 	if err != nil {
 		panic(err)
 	}

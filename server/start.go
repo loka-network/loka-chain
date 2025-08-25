@@ -65,6 +65,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
+	"github.com/loka-network/loka/v1/cmd/lokad/opendb"
 	"github.com/loka-network/loka/v1/indexer"
 	ethdebug "github.com/loka-network/loka/v1/rpc/namespaces/ethereum/debug"
 	"github.com/loka-network/loka/v1/server/config"
@@ -89,7 +90,7 @@ func NewDefaultStartOptions(appCreator types.AppCreator, defaultNodeHome string)
 	return StartOptions{
 		AppCreator:      appCreator,
 		DefaultNodeHome: defaultNodeHome,
-		DBOpener:        openDB,
+		DBOpener:        opendb.OpenDB,
 	}
 }
 
@@ -492,6 +493,7 @@ func startInProcess(svrCtx *server.Context, clientCtx client.Context, opts Start
 	return g.Wait()
 }
 
+// Deprecated: use opendb.OpenDB instead
 func openDB(_ types.AppOptions, rootDir string, backendType dbm.BackendType) (dbm.DB, error) {
 	dataDir := filepath.Join(rootDir, "data")
 	return dbm.NewDB("application", backendType, dataDir)

@@ -179,7 +179,7 @@ import (
 	"github.com/loka-network/loka/v1/x/ibc/transfer"
 	transferkeeper "github.com/loka-network/loka/v1/x/ibc/transfer/keeper"
 
-	// memiavlstore "github.com/crypto-org-chain/cronos/store"
+	memiavlstore "github.com/crypto-org-chain/cronos/store"
 
 	// Force-load the tracer engines to trigger registration due to Go-Ethereum v1.10.15 changes
 	_ "github.com/ethereum/go-ethereum/eth/tracers/js"
@@ -279,6 +279,40 @@ var (
 // object provided to it during init.
 type GenesisState map[string]json.RawMessage
 
+func StoreKeys() (
+	map[string]*storetypes.KVStoreKey,
+	map[string]*storetypes.TransientStoreKey,
+	map[string]*storetypes.ObjectStoreKey,
+	map[string]*storetypes.MemoryStoreKey,
+) {
+	keys := storetypes.NewKVStoreKeys(
+		// SDK keys
+		authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
+		distrtypes.StoreKey, slashingtypes.StoreKey,
+		govtypes.StoreKey, paramstypes.StoreKey, upgradetypes.StoreKey,
+		evidencetypes.StoreKey, capabilitytypes.StoreKey, consensusparamtypes.StoreKey,
+		feegrant.StoreKey, authzkeeper.StoreKey, crisistypes.StoreKey,
+		// ibc keys
+		ibcexported.StoreKey, ibctransfertypes.StoreKey,
+		// ica keys
+		icahosttypes.StoreKey,
+		// ibc rate-limit keys
+		ratelimittypes.StoreKey,
+		// ethermint keys
+		evmtypes.StoreKey, feemarkettypes.StoreKey,
+		// evmos keys
+		inflationtypes.StoreKey, erc20types.StoreKey,
+		epochstypes.StoreKey, vestingtypes.StoreKey,
+	)
+
+	// Add the EVM transient store key
+	tkeys := storetypes.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
+	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+	okeys := storetypes.NewObjectStoreKeys(banktypes.ObjectStoreKey, evmtypes.ObjectStoreKey)
+
+	return keys, tkeys, okeys, memKeys
+}
+
 // Evmos implements an extended ABCI application. It is an application
 // that may process transactions through Ethereum's EVM running atop of
 // Tendermint consensus.
@@ -344,6 +378,8 @@ type Evmos struct {
 	// simulation manager
 	sm *module.SimulationManager
 
+	qms storetypes.RootMultiStore
+	
 	tpsCounter *tpsCounter
 }
 
@@ -372,8 +408,14 @@ func NewEvmos(
 
 	eip712.SetEncodingConfig(encodingConfig)
 
-	// setup memiavl if it's enabled in config
-	// baseAppOptions = memiavlstore.SetupMemIAVL(logger, homePath, appOpts, false, false, baseAppOptions)
+	blockSTMEnabled := cast.ToString(appOpts.Get(srvflags.EVMBlockExecutor)) == "block-stm"
+
+	var cacheSize int
+	if !blockSTMEnabled {
+		// only enable memiavl cache if block-stm is not enabled, because it's not concurrency-safe.
+		cacheSize = cast.ToInt(appOpts.Get(memiavlstore.FlagCacheSize))
+	}
+	baseAppOptions = memiavlstore.SetupMemIAVL(logger, homePath, appOpts, false, false, cacheSize, baseAppOptions)
 
 	// Setup Mempool and Proposal Handlers
 	baseAppOptions = append(baseAppOptions, func(app *baseapp.BaseApp) {
@@ -383,7 +425,6 @@ func NewEvmos(
 		app.SetPrepareProposal(handler.PrepareProposalHandler())
 		app.SetProcessProposal(handler.ProcessProposalHandler())
 	})
-	blockSTMEnabled := cast.ToString(appOpts.Get(srvflags.EVMBlockExecutor)) == "block-stm"
 
 	// enable optimistic execution
 	baseAppOptions = append(baseAppOptions, baseapp.SetOptimisticExecution())
@@ -401,30 +442,7 @@ func NewEvmos(
 	bApp.SetInterfaceRegistry(interfaceRegistry)
 	bApp.SetDisableBlockGasMeter(true)
 
-	keys := storetypes.NewKVStoreKeys(
-		// SDK keys
-		authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
-		distrtypes.StoreKey, slashingtypes.StoreKey,
-		govtypes.StoreKey, paramstypes.StoreKey, upgradetypes.StoreKey,
-		evidencetypes.StoreKey, capabilitytypes.StoreKey, consensusparamtypes.StoreKey,
-		feegrant.StoreKey, authzkeeper.StoreKey, crisistypes.StoreKey,
-		// ibc keys
-		ibcexported.StoreKey, ibctransfertypes.StoreKey,
-		// ica keys
-		icahosttypes.StoreKey,
-		// ibc rate-limit keys
-		ratelimittypes.StoreKey,
-		// ethermint keys
-		evmtypes.StoreKey, feemarkettypes.StoreKey,
-		// evmos keys
-		inflationtypes.StoreKey, erc20types.StoreKey,
-		epochstypes.StoreKey, vestingtypes.StoreKey,
-	)
-
-	// Add the EVM transient store key
-	tkeys := storetypes.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
-	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
-	okeys := storetypes.NewObjectStoreKeys(banktypes.ObjectStoreKey, evmtypes.ObjectStoreKey)
+	keys, tkeys, okeys, memKeys := StoreKeys()
 
 	// load state streaming if enabled
 	if err := bApp.RegisterStreamingServices(appOpts, keys); err != nil {
@@ -944,6 +962,15 @@ func NewEvmos(
 	app.sm.RegisterStoreDecoders()
 	// add test gRPC service for testing gRPC queries in isolation
 	// testdata.RegisterTestServiceServer(app.GRPCQueryRouter(), testdata.TestServiceImpl{})
+	
+	// wire up the versiondb's `StreamingService` and `MultiStore`.
+	if cast.ToBool(appOpts.Get("versiondb.enable")) {
+		var err error
+		app.qms, err = app.setupVersionDB(homePath, keys, tkeys, okeys)
+		if err != nil {
+			panic(err)
+		}
+	}
 
 	// initialize stores
 	app.MountKVStores(keys)

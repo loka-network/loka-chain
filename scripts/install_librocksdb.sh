@@ -1,12 +1,12 @@
 #!/bin/bash
 
-ROCKSDB_VERSION=${1:-"9.3.1"}
+ROCKSDB_VERSION=${1:-"10.2.1"}
 
 # Check if RocksDB is already installed
 if [[ $(uname) == "Darwin" ]]; then
 	# On macOS, check for RocksDB in /opt/homebrew/lib
 	if [[ -f "/opt/homebrew/lib/librocksdb.dylib" ]]; then
-		read -r -p "RocksDB is already installed in /opt/homebrew/lib. Do you want to reinstall it? (yes/no): " choice
+		read -r -p "RocksDB is already installed in /opt/homebrew/lib. Do you want to rebuild and reinstall it? (yes/no): " choice
 		case "$choice" in
 		y | yes | Yes | YES)
 			echo "Reinstalling RocksDB..."
@@ -27,11 +27,11 @@ if [[ $(uname) == "Darwin" ]]; then
 else
 	# On Linux, check for RocksDB in /usr/lib
 	if [[ $(find /usr/lib -name "librocksdb.so.${ROCKSDB_VERSION}" -print -quit) ]]; then
-		read -r -p "RocksDB version ${ROCKSDB_VERSION} is already installed. Do you want to reinstall it? (yes/no): " choice
+		read -r -p "RocksDB version ${ROCKSDB_VERSION} is already installed. Do you want to rebuild and reinstall it? (yes/no): " choice
 		case "$choice" in
 		y | yes | Yes | YES)
 			echo "Reinstalling RocksDB..."
-			rm -rf /usr/lib/librocksdb*
+			rm -rf /usr/lib/librocksdb* /usr/include/rocksdb
 			;;
 		n | no | No | NO)
 			echo "Skipping RocksDB installation."
@@ -83,7 +83,9 @@ if [[ $(uname) == "Linux" ]]; then
 			git clone -b v"${ROCKSDB_VERSION}" --single-branch https://github.com/facebook/rocksdb.git &&
 			cd rocksdb &&
 			PORTABLE=1 WITH_JNI=0 WITH_BENCHMARK_TOOLS=0 WITH_TESTS=1 WITH_TOOLS=0 WITH_CORE_TOOLS=1 WITH_BZ2=1 WITH_LZ4=1 WITH_SNAPPY=1 WITH_ZLIB=1 WITH_ZSTD=1 WITH_GFLAGS=0 USE_RTTI=1 \
-				make shared_lib &&
+				make -j$(nproc) shared_lib &&
+				sudo make install-shared &&
+				sudo ldconfig &&
 			cp librocksdb.so* /usr/lib/ &&
 			cp -r include/* /usr/include/ &&
 			rm -rf /tmp/rocksdb
@@ -102,10 +104,10 @@ elif [[ $(uname) == "Darwin" ]]; then
 		git clone -b v"${ROCKSDB_VERSION}" --single-branch https://github.com/facebook/rocksdb.git && \
 		cd rocksdb && \
 		PORTABLE=1 WITH_JNI=0 WITH_BENCHMARK_TOOLS=0 WITH_TESTS=1 WITH_TOOLS=0 WITH_CORE_TOOLS=1 WITH_BZ2=1 WITH_LZ4=1 WITH_SNAPPY=1 WITH_ZLIB=1 WITH_ZSTD=1 WITH_GFLAGS=0 USE_RTTI=1 \
-			make shared_lib && \
+			make -j$(nproc) shared_lib && \
 		cp librocksdb.dylib* /opt/homebrew/lib/ && \
 		cp -r include/* /opt/homebrew/include/ && \
-        ln -sf librocksdb.dylib /opt/homebrew/lib/librocksdb.9.3.dylib
+        ln -sf librocksdb.dylib /opt/homebrew/lib/librocksdb.10.2.dylib
 		rm -rf /tmp/rocksdb
 else
 	echo "Unsupported OS."

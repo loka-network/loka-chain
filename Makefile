@@ -19,7 +19,7 @@ DOCKER_TAG := $(COMMIT_HASH)
 # e2e env
 MOUNT_PATH := $(shell pwd)/build/:/root/
 E2E_SKIP_CLEANUP := false
-ROCKSDB_VERSION ?= "9.3.1"
+ROCKSDB_VERSION ?= "10.2.1"
 
 export GO111MODULE = on
 
@@ -30,7 +30,7 @@ default_target: all
 
 # process build tags
 
-build_tags = netgo
+build_tags = netgo objstore
 ifeq ($(LEDGER_ENABLED),true)
   ifeq ($(OS),Windows_NT)
     GCCEXE = $(shell where gcc.exe 2> NUL)
@@ -178,7 +178,7 @@ build-rocksdb:
 	./scripts/install_librocksdb.sh $(ROCKSDB_VERSION)
 	@UNAME_S=$$(uname -s); \
 	if [ "$$UNAME_S" = "Linux" ]; then \
-		CGO_ENABLED=1 CGO_CFLAGS="-I/usr/include" \
+		CGO_ENABLED=1 CGO_CFLAGS="-I/usr/include -DROCKSDB_DISABLE_MAX_WRITE_BUFFER_MAINTAIN" \
 		CGO_LDFLAGS="-L/usr/lib -lrocksdb -lstdc++ -lm -lz -lbz2 -lsnappy -llz4 -lzstd -ldl" \
 		COSMOS_BUILD_OPTIONS=rocksdb $(MAKE) build install; \
 	elif [ "$$UNAME_S" = "Darwin" ]; then \
@@ -351,13 +351,13 @@ test-e2e:
 	@rm -rf build/.lokad
 	@INITIAL_VERSION=$(INITIAL_VERSION) TARGET_VERSION=$(TARGET_VERSION) \
 	E2E_SKIP_CLEANUP=$(E2E_SKIP_CLEANUP) MOUNT_PATH=$(MOUNT_PATH) CHAIN_ID=$(CHAIN_ID) \
-	go test -v ./tests/e2e -run ^TestIntegrationTestSuite$
+	go test -tags=objstore  -v ./tests/e2e -run ^TestIntegrationTestSuite$
 
 run-tests:
 ifneq (,$(shell which tparse 2>/dev/null))
-	go test -mod=readonly -json $(ARGS) $(EXTRA_ARGS) $(TEST_PACKAGES) | tparse
+	go test -tags=objstore  -mod=readonly -json $(ARGS) $(EXTRA_ARGS) $(TEST_PACKAGES) | tparse
 else
-	go test -mod=readonly $(ARGS)  $(EXTRA_ARGS) $(TEST_PACKAGES)
+	go test -tags=objstore  -mod=readonly $(ARGS)  $(EXTRA_ARGS) $(TEST_PACKAGES)
 endif
 
 test-import:
@@ -371,10 +371,19 @@ test-rpc:
 test-rpc-pending:
 	./scripts/integration-test-all.sh -t "pending" -q 1 -z 1 -s 2 -m "pending" -r "true"
 
+test-memiavl:
+	@cd memiavl; go test -tags=objstore -v -mod=readonly ./... -coverprofile=$(COVERAGE) -covermode=atomic;
+
+test-store:
+	@cd store; go test -tags=objstore -v -mod=readonly ./... -coverprofile=$(COVERAGE) -covermode=atomic;
+
+test-versiondb:
+	@cd versiondb; go test -tags=objstore,rocksdb -v -mod=readonly ./... -coverprofile=$(COVERAGE) -covermode=atomic;
+
 .PHONY: run-tests test test-all test-import test-rpc $(TEST_TARGETS)
 
 benchmark:
-	@go test -mod=readonly -bench=. $(PACKAGES_NOSIMULATION)
+	@go test -tags=objstore  -mod=readonly -bench=. $(PACKAGES_NOSIMULATION)
 .PHONY: benchmark
 
 ###############################################################################

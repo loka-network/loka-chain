@@ -12,8 +12,7 @@ KEYRING="test"
 KEYALGO="eth_secp256k1"
 LOGLEVEL="info"
 # Set dedicated home directory for the lokad instance
-# HOMEDIR="$HOME/.tmp-lokad"
-HOMEDIR="/Users/blake/work/nagara/code/evmos/.vscode/lokad-config"
+HOMEDIR="$HOME/.tmp-lokad"
 # to trace evm
 #TRACE="--trace"
 TRACE=""
@@ -37,7 +36,7 @@ set -e
 
 # Reinstall daemon
 if [[ "$COSMOS_BUILD_OPTIONS" == *"rocksdb"* ]]; then
-	export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH
+	export DYLD_LIBRARY_PATH=/opt/homebrew/lib:/usr/lib:$DYLD_LIBRARY_PATH
 	export COSMOS_BUILD_OPTIONS=rocksdb
 	make build-rocksdb
 else
