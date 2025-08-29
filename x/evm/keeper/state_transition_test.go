@@ -519,8 +519,8 @@ func (suite *KeeperTestSuite) TestResetGasMeterAndConsumeGas() {
 }
 
 func (suite *KeeperTestSuite) TestEVMConfig() {
-	proposerAddress := suite.ctx.BlockHeader().ProposerAddress
-	cfg, err := suite.app.EvmKeeper.EVMConfig(suite.ctx, proposerAddress, big.NewInt(567000))
+	// proposerAddress := suite.ctx.BlockHeader().ProposerAddress
+	cfg, err := suite.app.EvmKeeper.EVMConfig(suite.ctx, big.NewInt(567000), common.Hash{})
 	suite.Require().NoError(err)
 	suite.Require().Equal(types.DefaultParams(), cfg.Params)
 	// london hardfork is enabled by default
@@ -539,8 +539,8 @@ func (suite *KeeperTestSuite) TestApplyMessage() {
 	expectedGasUsed := params.TxGas
 	var msg *core.Message
 
-	proposerAddress := suite.ctx.BlockHeader().ProposerAddress
-	config, err := suite.app.EvmKeeper.EVMConfig(suite.ctx, proposerAddress, big.NewInt(567000))
+	// proposerAddress := suite.ctx.BlockHeader().ProposerAddress
+	config, err := suite.app.EvmKeeper.EVMConfig(suite.ctx, big.NewInt(567000), common.Hash{})
 	suite.Require().NoError(err)
 
 	keeperParams := suite.app.EvmKeeper.GetParams(suite.ctx)
@@ -574,7 +574,7 @@ func (suite *KeeperTestSuite) TestApplyMessageWithConfig() {
 		msg             *core.Message
 		err             error
 		expectedGasUsed uint64
-		config          *statedb.EVMConfig
+		config          *keeper.EVMConfig
 		keeperParams    types.Params
 		signer          ethtypes.Signer
 		vmdb            *statedb.StateDB
@@ -641,8 +641,8 @@ func (suite *KeeperTestSuite) TestApplyMessageWithConfig() {
 			suite.SetupTest()
 			expectedGasUsed = params.TxGas
 
-			proposerAddress := suite.ctx.BlockHeader().ProposerAddress
-			config, err = suite.app.EvmKeeper.EVMConfig(suite.ctx, proposerAddress, big.NewInt(567000))
+			// proposerAddress := suite.ctx.BlockHeader().ProposerAddress
+			config, err = suite.app.EvmKeeper.EVMConfig(suite.ctx, big.NewInt(567000), common.Hash{})
 			suite.Require().NoError(err)
 
 			keeperParams = suite.app.EvmKeeper.GetParams(suite.ctx)

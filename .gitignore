@@ -30,7 +30,7 @@ docs/cosmos-sdk
 docs/ethermint
 docs/ibc-go
 dist
-cache
+# cache
 tools-stamp
 docs-tools-stamp
 proto-tools-stamp

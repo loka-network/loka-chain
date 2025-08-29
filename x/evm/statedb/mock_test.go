@@ -71,7 +71,7 @@ func (k *MockKeeper) Transfer(ctx sdk.Context, sender, recipient sdk.AccAddress,
 	return k.AddBalance(ctx, recipient, coins)
 }
 
-func (k *MockKeeper) SetBalance(ctx sdk.Context, addr common.Address, amount *big.Int) error {
+func (k *MockKeeper) SetBalance(ctx sdk.Context, addr common.Address, amount *big.Int, evmDenom string) error {
 	acct, exists := k.accounts[addr]
 	if !exists {
 		return errors.New("account not found")
@@ -81,8 +81,8 @@ func (k *MockKeeper) SetBalance(ctx sdk.Context, addr common.Address, amount *bi
 	return nil
 }
 
-func (k *MockKeeper) GetBalance(ctx sdk.Context, addr common.Address) *big.Int {
-	acct, exists := k.accounts[addr]
+func (k *MockKeeper) GetBalance(ctx sdk.Context, addr sdk.AccAddress, evmDenom string) *big.Int {
+	acct, exists := k.accounts[common.Address(addr.Bytes())]
 	if !exists {
 		return big.NewInt(0)
 	}

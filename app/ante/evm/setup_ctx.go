@@ -26,16 +26,17 @@ import (
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/loka-network/loka/v1/app/ante/interfaces"
 	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 // EthSetupContextDecorator is adapted from SetUpContextDecorator from cosmos-sdk, it ignores gas consumption
 // by setting the gas meter to infinite
 type EthSetupContextDecorator struct {
-	evmKeeper EVMKeeper
+	evmKeeper interfaces.EVMKeeper
 }
 
-func NewEthSetUpContextDecorator(evmKeeper EVMKeeper) EthSetupContextDecorator {
+func NewEthSetUpContextDecorator(evmKeeper interfaces.EVMKeeper) EthSetupContextDecorator {
 	return EthSetupContextDecorator{
 		evmKeeper: evmKeeper,
 	}
@@ -55,7 +56,7 @@ func (esc EthSetupContextDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simul
 
 	// Reset transient gas used to prepare the execution of current cosmos tx.
 	// Transient gas-used is necessary to sum the gas-used of cosmos tx, when it contains multiple eth msgs.
-	esc.evmKeeper.ResetTransientGasUsed(ctx)
+	// esc.evmKeeper.ResetTransientGasUsed(ctx)
 	return next(newCtx, tx, simulate)
 }
 

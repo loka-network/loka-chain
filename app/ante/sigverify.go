@@ -23,12 +23,15 @@ import (
 	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/crypto/types/multisig"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/loka-network/loka/v1/crypto/ethsecp256k1"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 var _ authante.SignatureVerificationGasConsumer = SigVerificationGasConsumer
@@ -97,6 +100,26 @@ func ConsumeMultisignatureVerificationGas(
 			return err
 		}
 		sigIndex++
+	}
+
+	return nil
+}
+
+// VerifyEthSig validates checks that the registered chain id is the same as the one on the message, and
+// that the signer address matches the one defined on the message.
+// It's not skipped for RecheckTx, because it set `From` address which is critical from other ante handler to work.
+// Failure in RecheckTx will prevent tx to be included into block, especially when CheckTx succeed, in which case user
+// won't see the error message.
+func VerifyEthSig(tx sdk.Tx, signer ethtypes.Signer) error {
+	for _, msg := range tx.GetMsgs() {
+		msgEthTx, ok := msg.(*evmtypes.MsgEthereumTx)
+		if !ok {
+			return errorsmod.Wrapf(errortypes.ErrUnknownRequest, "invalid message type %T, expected %T", msg, (*evmtypes.MsgEthereumTx)(nil))
+		}
+
+		if err := msgEthTx.VerifySender(signer); err != nil {
+			return errorsmod.Wrapf(errortypes.ErrorInvalidSigner, "signature verification failed: %s", err.Error())
+		}
 	}
 
 	return nil

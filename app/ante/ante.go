@@ -17,7 +17,11 @@
 package ante
 
 import (
+	"fmt"
+	"runtime/debug"
+
 	errorsmod "cosmossdk.io/errors"
+	tmlog "cosmossdk.io/log"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
@@ -28,10 +32,14 @@ import (
 // transaction-level processing (e.g. fee payment, signature verification) before
 // being passed onto it's respective handler.
 func NewAnteHandler(options HandlerOptions) sdk.AnteHandler {
+	ethAnteHandler := newEthAnteHandler(options)
+
 	return func(
 		ctx sdk.Context, tx sdk.Tx, sim bool,
 	) (newCtx sdk.Context, err error) {
 		var anteHandler sdk.AnteHandler
+
+		defer Recover(ctx.Logger(), &err)
 
 		txWithExtensions, ok := tx.(authante.HasExtensionOptionsTx)
 		if ok {
@@ -40,13 +48,14 @@ func NewAnteHandler(options HandlerOptions) sdk.AnteHandler {
 				switch typeURL := opts[0].GetTypeUrl(); typeURL {
 				case "/ethermint.evm.v1.ExtensionOptionsEthereumTx":
 					// handle as *evmtypes.MsgEthereumTx
-					anteHandler = newEVMAnteHandler(options)
+					// anteHandler = newEVMAnteHandler(options)
+					anteHandler = ethAnteHandler
 				case "/ethermint.types.v1.ExtensionOptionsWeb3Tx":
 					// handle as normal Cosmos SDK tx, except signature is checked for EIP712 representation
-					anteHandler = newLegacyCosmosAnteHandlerEip712(options)
+					anteHandler = newLegacyCosmosAnteHandlerEip712(ctx, options)
 				case "/ethermint.types.v1.ExtensionOptionDynamicFeeTx":
 					// cosmos-sdk tx with dynamic fee extension
-					anteHandler = newCosmosAnteHandler(options)
+					anteHandler = newCosmosAnteHandler(ctx, options)
 				default:
 					return ctx, errorsmod.Wrapf(
 						errortypes.ErrUnknownExtensionOptions,
@@ -61,11 +70,30 @@ func NewAnteHandler(options HandlerOptions) sdk.AnteHandler {
 		// handle as totally normal Cosmos SDK tx
 		switch tx.(type) {
 		case sdk.Tx:
-			anteHandler = newCosmosAnteHandler(options)
+			anteHandler = newCosmosAnteHandler(ctx, options)
 		default:
 			return ctx, errorsmod.Wrapf(errortypes.ErrUnknownRequest, "invalid transaction type: %T", tx)
 		}
 
 		return anteHandler(ctx, tx, sim)
+	}
+}
+
+func Recover(logger tmlog.Logger, err *error) {
+	if r := recover(); r != nil {
+		*err = errorsmod.Wrapf(errortypes.ErrPanic, "%v", r)
+
+		if e, ok := r.(error); ok {
+			logger.Error(
+				"ante handler panicked",
+				"error", e,
+				"stack trace", string(debug.Stack()),
+			)
+		} else {
+			logger.Error(
+				"ante handler panicked",
+				"recover", fmt.Sprintf("%v", r),
+			)
+		}
 	}
 }

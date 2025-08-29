@@ -49,6 +49,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/address"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/runtime"
+	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 
@@ -143,6 +144,7 @@ import (
 	icahosttypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/types"
 	icatypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/types"
 
+	"github.com/loka-network/loka/v1/app/ante/cache"
 	ethante "github.com/loka-network/loka/v1/app/ante/evm"
 	"github.com/loka-network/loka/v1/ethereum/eip712"
 	srvflags "github.com/loka-network/loka/v1/server/flags"
@@ -182,6 +184,7 @@ import (
 	memiavlstore "github.com/crypto-org-chain/cronos/store"
 
 	// Force-load the tracer engines to trigger registration due to Go-Ethereum v1.10.15 changes
+	"github.com/ethereum/go-ethereum/common"
 	_ "github.com/ethereum/go-ethereum/eth/tracers/js"
 	_ "github.com/ethereum/go-ethereum/eth/tracers/native"
 )
@@ -327,6 +330,8 @@ type Evmos struct {
 
 	invCheckPeriod uint
 
+	pendingTxListeners []ante.PendingTxListener
+
 	// keys to access the substores
 	keys    map[string]*storetypes.KVStoreKey
 	tkeys   map[string]*storetypes.TransientStoreKey
@@ -379,7 +384,7 @@ type Evmos struct {
 	sm *module.SimulationManager
 
 	qms storetypes.RootMultiStore
-	
+
 	tpsCounter *tpsCounter
 }
 
@@ -962,7 +967,7 @@ func NewEvmos(
 	app.sm.RegisterStoreDecoders()
 	// add test gRPC service for testing gRPC queries in isolation
 	// testdata.RegisterTestServiceServer(app.GRPCQueryRouter(), testdata.TestServiceImpl{})
-	
+
 	// wire up the versiondb's `StreamingService` and `MultiStore`.
 	if cast.ToBool(appOpts.Get("versiondb.enable")) {
 		var err error
@@ -985,7 +990,7 @@ func NewEvmos(
 
 	maxGasWanted := cast.ToUint64(appOpts.Get(srvflags.EVMMaxTxGasWanted))
 
-	app.setAnteHandler(encodingConfig.TxConfig, maxGasWanted)
+	app.setAnteHandler(encodingConfig.TxConfig, maxGasWanted, cast.ToInt(appOpts.Get(server.FlagMempoolMaxTxs)))
 	app.setPostHandler()
 	app.SetEndBlocker(app.EndBlocker)
 	app.setupUpgradeHandlers()
@@ -1052,7 +1057,7 @@ func (app *Evmos) EncodingConfig() sdktestutil.TestEncodingConfig {
 	}
 }
 
-func (app *Evmos) setAnteHandler(txConfig client.TxConfig, maxGasWanted uint64) {
+func (app *Evmos) setAnteHandler(txConfig client.TxConfig, maxGasWanted uint64, mempoolMaxTxs int) {
 	options := ante.HandlerOptions{
 		Cdc:                    app.appCodec,
 		AccountKeeper:          app.AccountKeeper,
@@ -1068,6 +1073,9 @@ func (app *Evmos) setAnteHandler(txConfig client.TxConfig, maxGasWanted uint64) 
 		SigGasConsumer:         ante.SigVerificationGasConsumer,
 		MaxTxGasWanted:         maxGasWanted,
 		TxFeeChecker:           ethante.NewDynamicFeeChecker(app.EvmKeeper),
+		PendingTxListener:      app.onPendingTx,
+		UnsafeUnorderedTx: 		true,
+		AnteCache:              cache.NewAnteCache(mempoolMaxTxs),
 	}
 
 	if err := options.Validate(); err != nil {
@@ -1075,6 +1083,12 @@ func (app *Evmos) setAnteHandler(txConfig client.TxConfig, maxGasWanted uint64) 
 	}
 
 	app.SetAnteHandler(ante.NewAnteHandler(options))
+}
+
+func (app *Evmos) onPendingTx(hash common.Hash) {
+	for _, listener := range app.pendingTxListeners {
+		listener(hash)
+	}
 }
 
 func (app *Evmos) setPostHandler() {
@@ -1339,6 +1353,11 @@ func (app *Evmos) AutoCliOpts() autocli.AppOptions {
 		ValidatorAddressCodec: authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ValidatorAddrPrefix()),
 		ConsensusAddressCodec: authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ConsensusAddrPrefix()),
 	}
+}
+
+// RegisterPendingTxListener is used by json-rpc server to listen to pending transactions callback.
+func (app *Evmos) RegisterPendingTxListener(listener ante.PendingTxListener) {
+	app.pendingTxListeners = append(app.pendingTxListeners, listener)
 }
 
 // RegisterSwaggerAPI registers swagger route with API Server

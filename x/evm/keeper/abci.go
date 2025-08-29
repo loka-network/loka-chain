@@ -17,13 +17,30 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	lokatypes "github.com/loka-network/loka/v1/types"
 )
 
 // BeginBlock sets the sdk Context and EIP155 chain id to the Keeper.
 func (k *Keeper) BeginBlock(ctx sdk.Context) error {
 	k.WithChainID(ctx)
 
+	// cache parameters that's common for the whole block.
+	cfg, err := k.EVMBlockConfig(ctx, k.ChainID())
+	if err != nil {
+		return err
+	}
 	k.SetHeaderHash(ctx)
+	headerHashNum, err := lokatypes.SafeInt64(cfg.Params.GetHeaderHashNum())
+	if err != nil {
+		panic(err)
+	}
+	if i := ctx.BlockHeight() - headerHashNum; i > 0 {
+		h, err := lokatypes.SafeUint64(i)
+		if err != nil {
+			panic(err)
+		}
+		k.DeleteHeaderHash(ctx, h)
+	}
 	return nil
 }
 

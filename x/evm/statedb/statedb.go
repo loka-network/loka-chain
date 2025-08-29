@@ -201,7 +201,8 @@ func (s *StateDB) Empty(addr common.Address) bool {
 
 // GetBalance retrieves the balance from the given address or 0 if object not found
 func (s *StateDB) GetBalance(addr common.Address) *big.Int {
-	return s.keeper.GetBalance(s.ctx, addr)
+	bal := s.keeper.GetBalance(s.ctx, sdk.AccAddress(addr.Bytes()), s.evmDenom)
+	return bal
 }
 
 // GetNonce returns the nonce of account, 0 if not exists.
@@ -447,7 +448,7 @@ func (s *StateDB) SubBalance(addr common.Address, amount *big.Int) {
 // SetBalance is called by state override
 func (s *StateDB) SetBalance(addr common.Address, amount *big.Int) {
 	if err := s.ExecuteNativeAction(common.Address{}, nil, func(ctx sdk.Context) error {
-		return s.keeper.SetBalance(ctx, addr, amount)
+		return s.keeper.SetBalance(ctx, addr, amount, s.evmDenom)
 	}); err != nil {
 		s.err = err
 	}

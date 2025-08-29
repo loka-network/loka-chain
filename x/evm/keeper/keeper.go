@@ -330,8 +330,8 @@ func (k *Keeper) GetNonce(ctx sdk.Context, addr common.Address) uint64 {
 	return acct.GetSequence()
 }
 
-// GetBalance load account's balance of gas token
-func (k *Keeper) GetBalance(ctx sdk.Context, addr common.Address) *big.Int {
+// GetEVMDenomBalance load account's balance of gas token
+func (k *Keeper) GetEVMDenomBalance(ctx sdk.Context, addr common.Address) *big.Int {
 	cosmosAddr := sdk.AccAddress(addr.Bytes())
 	evmParams := k.GetParams(ctx)
 	evmDenom := evmParams.GetEvmDenom()
@@ -339,8 +339,14 @@ func (k *Keeper) GetBalance(ctx sdk.Context, addr common.Address) *big.Int {
 	if evmDenom == "" {
 		return big.NewInt(-1)
 	}
-	coin := k.bankKeeper.GetBalance(ctx, cosmosAddr, evmDenom)
-	return coin.Amount.BigInt()
+	coin := k.GetBalance(ctx, cosmosAddr, evmDenom)
+	return coin
+}
+
+// GetBalance load account's balance of specified denom
+func (k *Keeper) GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom string) *big.Int {
+	balance := k.bankKeeper.GetBalance(ctx, addr, denom).Amount.BigInt()
+	return balance
 }
 
 // GetBaseFee returns current base fee, return values:

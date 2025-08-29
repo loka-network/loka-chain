@@ -19,7 +19,7 @@ for dir in $proto_dirs; do
 done
 
 # move proto files to the right places
-cp -r github.com/loka-network/loka-chain/v*/* ./
+cp -r github.com/loka-network/loka/v*/* ./
 rm -rf github.com
 
 sh ./scripts/protocgen-pulsar.sh

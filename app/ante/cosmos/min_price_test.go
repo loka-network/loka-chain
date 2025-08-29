@@ -9,6 +9,7 @@ import (
 	"github.com/loka-network/loka/v1/testutil"
 	testutiltx "github.com/loka-network/loka/v1/testutil/tx"
 	"github.com/loka-network/loka/v1/utils"
+	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 var execTypes = []struct {
@@ -126,7 +127,8 @@ func (suite *AnteTestSuite) TestMinGasPriceDecorator() {
 			suite.Run(et.name+"_"+tc.name, func() {
 				// s.SetupTest(et.isCheckTx)
 				ctx := suite.ctx.WithIsReCheckTx(et.isCheckTx)
-				dec := cosmosante.NewMinGasPriceDecorator(suite.app.FeeMarketKeeper, suite.app.EvmKeeper)
+				feemarketParams := suite.app.FeeMarketKeeper.GetParams(ctx)
+				dec := cosmosante.NewMinGasPriceDecorator(suite.app.FeeMarketKeeper,  evmtypes.DefaultEVMDenom, &feemarketParams)
 				_, err := dec.AnteHandle(ctx, tc.malleate(), et.simulate, testutil.NextFn)
 
 				if tc.expPass || (et.simulate && tc.allowPassOnSimulate) {

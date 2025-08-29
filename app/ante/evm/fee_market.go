@@ -21,6 +21,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/loka-network/loka/v1/app/ante/interfaces"
 	"github.com/loka-network/loka/v1/types"
 )
 
@@ -28,13 +29,13 @@ import (
 // for BaseFee calculation.
 // NOTE: This decorator does not perform any validation
 type GasWantedDecorator struct {
-	evmKeeper       EVMKeeper
+	evmKeeper       interfaces.EVMKeeper
 	feeMarketKeeper FeeMarketKeeper
 }
 
 // NewGasWantedDecorator creates a new NewGasWantedDecorator
 func NewGasWantedDecorator(
-	evmKeeper EVMKeeper,
+	evmKeeper interfaces.EVMKeeper,
 	feeMarketKeeper FeeMarketKeeper,
 ) GasWantedDecorator {
 	return GasWantedDecorator{

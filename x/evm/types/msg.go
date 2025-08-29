@@ -16,6 +16,7 @@
 package types
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"math/big"
@@ -164,6 +165,30 @@ func (msg *MsgEthereumTx) FromEthereumTx(tx *ethtypes.Transaction) error {
 	return nil
 }
 
+// FromSignedEthereumTx populates the message fields from the given signed ethereum transaction, and set From field.
+func (msg *MsgEthereumTx) FromSignedEthereumTx(tx *ethtypes.Transaction, signer ethtypes.Signer) error {
+	txData, err := NewTxDataFromTx(tx)
+	if err != nil {
+		return err
+	}
+
+	anyTxData, err := PackTxData(txData)
+	if err != nil {
+		return err
+	}
+
+	msg.Data = anyTxData
+	msg.Hash = tx.Hash().Hex()
+
+	from, err := ethtypes.Sender(signer, tx)
+	if err != nil {
+		return err
+	}
+
+	msg.From = from.Hex()
+	return nil
+}
+
 // Route returns the route value of an MsgEthereumTx.
 func (msg MsgEthereumTx) Route() string { return RouterKey }
 
@@ -240,6 +265,11 @@ func (msg *MsgEthereumTx) GetSigners() []sdk.AccAddress {
 
 	signer := sdk.AccAddress(sender.Bytes())
 	return []sdk.AccAddress{signer}
+}
+
+// recoverSender recovers the sender address from the transaction signature.
+func (msg *MsgEthereumTx) recoverSender(signer ethtypes.Signer) (common.Address, error) {
+	return ethtypes.Sender(signer, msg.AsTransaction())
 }
 
 // GetSignBytes returns the Amino bytes of an Ethereum transaction message used
@@ -344,6 +374,20 @@ func (msg *MsgEthereumTx) GetSender(chainID *big.Int) (common.Address, error) {
 	return from, nil
 }
 
+// VerifySender verify the sender address against the signature values using the latest signer for the given chainID.
+func (msg *MsgEthereumTx) VerifySender(signer ethtypes.Signer) error {
+	from, err := msg.recoverSender(signer)
+	if err != nil {
+		return err
+	}
+
+	fromBytes := common.FromHex(msg.From)
+	if !bytes.Equal(fromBytes, from.Bytes()) {
+		return fmt.Errorf("sender verification failed. got %s, expected %s", HexAddress(from.Bytes()), msg.From)
+	}
+	return nil
+}
+
 // UnpackInterfaces implements UnpackInterfacesMesssage.UnpackInterfaces
 func (msg MsgEthereumTx) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	return unpacker.UnpackAny(msg.Data, new(TxData))
@@ -383,7 +427,7 @@ func (msg *MsgEthereumTx) BuildTx(b client.TxBuilder, evmDenom string) (signing.
 	builder.SetExtensionOptions(option)
 
 	// A valid msg should have empty `From`
-	msg.From = ""
+	// msg.From = ""
 
 	err = builder.SetMsgs(msg)
 	if err != nil {

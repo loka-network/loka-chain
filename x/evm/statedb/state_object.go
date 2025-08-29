@@ -20,8 +20,10 @@ import (
 	"math/big"
 	"sort"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+	lokatypes "github.com/loka-network/loka/v1/types"
 )
 
 var emptyCodeHash = crypto.Keccak256(nil)
@@ -40,6 +42,18 @@ func NewEmptyAccount() *Account {
 		Balance:  new(big.Int),
 		CodeHash: emptyCodeHash,
 	}
+}
+
+// NewAccountFromSdkAccount extracts the nonce and code hash from the provided SDK account.
+func NewAccountFromSdkAccount(acct sdk.AccountI) *Account {
+	acc := NewEmptyAccount()
+	acc.Nonce = acct.GetSequence()
+
+	if ethAcct, ok := acct.(lokatypes.EthAccountI); ok {
+		acc.CodeHash = ethAcct.GetCodeHash().Bytes()
+	}
+
+	return acc
 }
 
 // IsContract returns if the account contains contract code.

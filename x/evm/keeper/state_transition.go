@@ -48,8 +48,7 @@ import (
 func (k *Keeper) NewEVM(
 	ctx sdk.Context,
 	msg core.Message,
-	cfg *statedb.EVMConfig,
-	tracer vm.EVMLogger,
+	cfg *EVMConfig,
 	stateDB vm.StateDB,
 ) *vm.EVM {
 	blockCtx := vm.BlockContext{
@@ -66,10 +65,10 @@ func (k *Keeper) NewEVM(
 	}
 
 	txCtx := core.NewEVMTxContext(msg)
-	if tracer == nil {
-		tracer = k.Tracer(ctx, msg, cfg.ChainConfig)
+	if cfg.Tracer == nil {
+		cfg.Tracer = k.Tracer(ctx, msg, cfg.ChainConfig)
 	}
-	vmConfig := k.VMConfig(ctx, msg, cfg, tracer)
+	vmConfig := k.VMConfig(ctx, cfg)
 	return vm.NewEVM(blockCtx, txCtx, stateDB, cfg.ChainConfig, vmConfig)
 }
 
@@ -147,12 +146,7 @@ func (k Keeper) GetHashFn(ctx sdk.Context) vm.GetHashFunc {
 //
 // For relevant discussion see: https://github.com/cosmos/cosmos-sdk/discussions/9072
 func (k *Keeper) ApplyTransaction(ctx sdk.Context, tx *ethtypes.Transaction) (*types.MsgEthereumTxResponse, error) {
-	// var (
-	// 	bloom        *big.Int
-	// 	bloomReceipt ethtypes.Bloom
-	// )
-
-	cfg, err := k.EVMConfig(ctx, sdk.ConsAddress(ctx.BlockHeader().ProposerAddress), k.eip155ChainID)
+	cfg, err := k.EVMConfig(ctx, k.eip155ChainID, tx.Hash())
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "failed to load evm config")
 	}
@@ -200,16 +194,16 @@ func (k *Keeper) ApplyTransaction(ctx sdk.Context, tx *ethtypes.Transaction) (*t
 	}
 
 	receipt := &ethtypes.Receipt{
-		Type:              tx.Type(),
-		PostState:         nil, // TODO: intermediate state root
+		Type:      tx.Type(),
+		PostState: nil, // TODO: intermediate state root
 		// Bloom:             bloomReceipt,
-		Logs:              logs,
-		TxHash:            txConfig.TxHash,
-		ContractAddress:   contractAddr,
-		GasUsed:           res.GasUsed,
-		BlockHash:         txConfig.BlockHash,
-		BlockNumber:       big.NewInt(ctx.BlockHeight()),
-		TransactionIndex:  txConfig.TxIndex,
+		Logs:             logs,
+		TxHash:           txConfig.TxHash,
+		ContractAddress:  contractAddr,
+		GasUsed:          res.GasUsed,
+		BlockHash:        txConfig.BlockHash,
+		BlockNumber:      big.NewInt(ctx.BlockHeight()),
+		TransactionIndex: txConfig.TxIndex,
 	}
 
 	if !res.Failed() {
@@ -255,7 +249,7 @@ func (k *Keeper) ApplyTransaction(ctx sdk.Context, tx *ethtypes.Transaction) (*t
 
 // ApplyMessage calls ApplyMessageWithConfig with an empty TxConfig.
 func (k *Keeper) ApplyMessage(ctx sdk.Context, msg core.Message, tracer vm.EVMLogger, commit bool) (*types.MsgEthereumTxResponse, error) {
-	cfg, err := k.EVMConfig(ctx, sdk.ConsAddress(ctx.BlockHeader().ProposerAddress), k.eip155ChainID)
+	cfg, err := k.EVMConfig(ctx, k.eip155ChainID, common.Hash{})
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "failed to load evm config")
 	}
@@ -306,7 +300,7 @@ func (k *Keeper) ApplyMessageWithConfig(ctx sdk.Context,
 	msg core.Message,
 	tracer vm.EVMLogger,
 	commit bool,
-	cfg *statedb.EVMConfig,
+	cfg *EVMConfig,
 	txConfig statedb.TxConfig,
 ) (*types.MsgEthereumTxResponse, error) {
 	var (
@@ -322,7 +316,7 @@ func (k *Keeper) ApplyMessageWithConfig(ctx sdk.Context,
 	}
 
 	stateDB := statedb.New(ctx, k, txConfig)
-	evm := k.NewEVM(ctx, msg, cfg, tracer, stateDB)
+	evm := k.NewEVM(ctx, msg, cfg, stateDB)
 
 	leftoverGas := msg.Gas()
 

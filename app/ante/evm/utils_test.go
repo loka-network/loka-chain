@@ -45,6 +45,7 @@ import (
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	utiltx "github.com/loka-network/loka/v1/testutil/tx"
+	"github.com/loka-network/loka/v1/x/evm/types"
 	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
@@ -552,7 +553,7 @@ func (suite *AnteTestSuite) RegisterAccount(pubKey cryptotypes.PubKey, balance *
 	acc := suite.app.AccountKeeper.NewAccountWithAddress(suite.ctx, sdk.AccAddress(pubKey.Address()))
 	suite.app.AccountKeeper.SetAccount(suite.ctx, acc)
 
-	err := suite.app.EvmKeeper.SetBalance(suite.ctx, common.BytesToAddress(pubKey.Address()), balance)
+	err := suite.app.EvmKeeper.SetBalance(suite.ctx, common.BytesToAddress(pubKey.Address()), balance, types.DefaultEVMDenom)
 	suite.Require().NoError(err)
 }
 

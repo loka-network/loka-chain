@@ -153,7 +153,7 @@ func (k Keeper) Balance(c context.Context, req *types.QueryBalanceRequest) (*typ
 
 	ctx := sdk.UnwrapSDKContext(c)
 
-	balanceInt := k.GetBalance(ctx, common.HexToAddress(req.Address))
+	balanceInt := k.GetEVMDenomBalance(ctx, common.HexToAddress(req.Address))
 
 	return &types.QueryBalanceResponse{
 		Balance: balanceInt.String(),
@@ -231,6 +231,7 @@ func (k Keeper) EthCall(c context.Context, req *types.EthCallRequest) (*types.Ms
 	}
 
 	ctx := sdk.UnwrapSDKContext(c)
+	ctx = ctx.WithProposer(GetProposerAddress(ctx, req.ProposerAddress))
 
 	var args types.TransactionArgs
 	err := json.Unmarshal(req.Args, &args)
@@ -241,7 +242,7 @@ func (k Keeper) EthCall(c context.Context, req *types.EthCallRequest) (*types.Ms
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	cfg, err := k.EVMConfig(ctx, GetProposerAddress(ctx, req.ProposerAddress), chainID)
+	cfg, err := k.EVMConfig(ctx, chainID, common.Hash{})
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -273,6 +274,7 @@ func (k Keeper) EstimateGas(c context.Context, req *types.EthCallRequest) (*type
 	}
 
 	ctx := sdk.UnwrapSDKContext(c)
+	ctx = ctx.WithProposer(GetProposerAddress(ctx, req.ProposerAddress))
 	chainID, err := getChainID(ctx, req.ChainId)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -316,7 +318,7 @@ func (k Keeper) EstimateGas(c context.Context, req *types.EthCallRequest) (*type
 	}
 
 	gasCap = hi
-	cfg, err := k.EVMConfig(ctx, GetProposerAddress(ctx, req.ProposerAddress), chainID)
+	cfg, err := k.EVMConfig(ctx, chainID, common.Hash{})
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to load evm config")
 	}
@@ -414,11 +416,12 @@ func (k Keeper) TraceTx(c context.Context, req *types.QueryTraceTxRequest) (*typ
 	ctx = ctx.WithBlockHeight(contextHeight)
 	ctx = ctx.WithBlockTime(req.BlockTime)
 	ctx = ctx.WithHeaderHash(common.Hex2Bytes(req.BlockHash))
+	ctx = ctx.WithProposer(GetProposerAddress(ctx, req.ProposerAddress))
 	chainID, err := getChainID(ctx, req.ChainId)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	cfg, err := k.EVMConfig(ctx, GetProposerAddress(ctx, req.ProposerAddress), chainID)
+	cfg, err := k.EVMConfig(ctx, chainID, common.Hash{})
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to load evm config: %s", err.Error())
 	}
@@ -491,12 +494,13 @@ func (k Keeper) TraceBlock(c context.Context, req *types.QueryTraceBlockRequest)
 	ctx = ctx.WithBlockHeight(contextHeight)
 	ctx = ctx.WithBlockTime(req.BlockTime)
 	ctx = ctx.WithHeaderHash(common.Hex2Bytes(req.BlockHash))
+	ctx = ctx.WithProposer(GetProposerAddress(ctx, req.ProposerAddress))
 	chainID, err := getChainID(ctx, req.ChainId)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	cfg, err := k.EVMConfig(ctx, GetProposerAddress(ctx, req.ProposerAddress), chainID)
+	cfg, err := k.EVMConfig(ctx, chainID, common.Hash{})
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to load evm config")
 	}
@@ -533,7 +537,7 @@ func (k Keeper) TraceBlock(c context.Context, req *types.QueryTraceBlockRequest)
 // traceTx do trace on one transaction, it returns a tuple: (traceResult, nextLogIndex, error).
 func (k *Keeper) traceTx(
 	ctx sdk.Context,
-	cfg *statedb.EVMConfig,
+	cfg *EVMConfig,
 	txConfig statedb.TxConfig,
 	signer ethtypes.Signer,
 	tx *ethtypes.Transaction,

@@ -22,16 +22,17 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/loka-network/loka/v1/app/ante/interfaces"
 	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
 // EthSigVerificationDecorator validates an ethereum signatures
 type EthSigVerificationDecorator struct {
-	evmKeeper EVMKeeper
+	evmKeeper interfaces.EVMKeeper
 }
 
 // NewEthSigVerificationDecorator creates a new EthSigVerificationDecorator
-func NewEthSigVerificationDecorator(ek EVMKeeper) EthSigVerificationDecorator {
+func NewEthSigVerificationDecorator(ek interfaces.EVMKeeper) EthSigVerificationDecorator {
 	return EthSigVerificationDecorator{
 		evmKeeper: ek,
 	}

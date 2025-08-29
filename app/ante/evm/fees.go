@@ -24,6 +24,7 @@ import (
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/loka-network/loka/v1/app/ante/interfaces"
 	evmtypes "github.com/loka-network/loka/v1/x/evm/types"
 )
 
@@ -34,7 +35,7 @@ import (
 // If fee is high enough, then call next AnteHandler
 type EthMinGasPriceDecorator struct {
 	feesKeeper FeeMarketKeeper
-	evmKeeper  EVMKeeper
+	evmKeeper  interfaces.EVMKeeper
 }
 
 // EthMempoolFeeDecorator will check if the transaction's effective fee is at least as large
@@ -44,12 +45,12 @@ type EthMinGasPriceDecorator struct {
 // If fee is high enough or not CheckTx, then call next AnteHandler
 // CONTRACT: Tx must implement FeeTx to use MempoolFeeDecorator
 type EthMempoolFeeDecorator struct {
-	evmKeeper EVMKeeper
+	evmKeeper interfaces.EVMKeeper
 }
 
 // NewEthMinGasPriceDecorator creates a new MinGasPriceDecorator instance used only for
 // Ethereum transactions.
-func NewEthMinGasPriceDecorator(fk FeeMarketKeeper, ek EVMKeeper) EthMinGasPriceDecorator {
+func NewEthMinGasPriceDecorator(fk FeeMarketKeeper, ek interfaces.EVMKeeper) EthMinGasPriceDecorator {
 	return EthMinGasPriceDecorator{feesKeeper: fk, evmKeeper: ek}
 }
 

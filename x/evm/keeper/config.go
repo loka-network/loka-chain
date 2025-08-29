@@ -21,7 +21,6 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/params"
 	evmostypes "github.com/loka-network/loka/v1/types"
@@ -53,7 +52,7 @@ type EVMBlockConfig struct {
 type EVMConfig struct {
 	*EVMBlockConfig
 	TxConfig   statedb.TxConfig
-	Tracer     *vm.EVMLogger
+	Tracer     vm.EVMLogger
 	DebugTrace bool
 	// Overrides      *rpctypes.StateOverride
 	// BlockOverrides *rpctypes.BlockOverrides
@@ -123,37 +122,30 @@ func (k *Keeper) RemoveParamsCache(ctx sdk.Context) {
 	ctx.ObjectStore(k.objectKey).Delete(types.KeyPrefixObjectParams)
 }
 
-func (cfg EVMConfig) GetTracer() *vm.EVMLogger {
+func (cfg EVMConfig) GetTracer() vm.EVMLogger {
+	if _, ok := cfg.Tracer.(*types.NoOpTracer); ok {
+		return nil
+	}
 	return cfg.Tracer
 }
 
 // EVMConfig creates the EVMConfig based on current state
-func (k *Keeper) EVMConfig(ctx sdk.Context, proposerAddress sdk.ConsAddress, chainID *big.Int) (*statedb.EVMConfig, error) {
-	objStore := ctx.ObjectStore(k.objectKey)
-	v := objStore.Get(types.KeyPrefixObjectParams)
-	if v != nil {
-		return v.(*statedb.EVMConfig), nil
-	}
-
-	params := k.GetParams(ctx)
-	ethCfg := params.ChainConfig.EthereumConfig(chainID)
-
-	// get the coinbase address from the block proposer
-	coinbase, err := k.GetCoinbaseAddress(ctx, proposerAddress)
+func (k *Keeper) EVMConfig(ctx sdk.Context, chainID *big.Int, txHash common.Hash) (*EVMConfig, error) {
+	blockCfg, err := k.EVMBlockConfig(ctx, chainID)
 	if err != nil {
-		return nil, errorsmod.Wrap(err, "failed to obtain coinbase address")
+		return nil, err
+	}
+	var txConfig statedb.TxConfig
+	if txHash == (common.Hash{}) {
+		txConfig = statedb.NewEmptyTxConfig(common.BytesToHash(ctx.HeaderHash()))
+	} else {
+		txConfig = k.TxConfig(ctx, txHash)
 	}
 
-	baseFee := k.GetBaseFee(ctx, ethCfg)
-	cfg := &statedb.EVMConfig{
-		Params:      params,
-		ChainConfig: ethCfg,
-		CoinBase:    coinbase,
-		BaseFee:     baseFee,
-	}
-	// Store the EVMConfig in the object store for future retrieval
-	objStore.Set(types.KeyPrefixObjectParams, cfg)
-	return cfg, nil
+	return &EVMConfig{
+		EVMBlockConfig: blockCfg,
+		TxConfig:       txConfig,
+	}, nil
 }
 
 // TxConfig loads `TxConfig` from current transient storage
@@ -161,21 +153,21 @@ func (k *Keeper) TxConfig(ctx sdk.Context, txHash common.Hash) statedb.TxConfig 
 	return statedb.NewTxConfig(
 		common.BytesToHash(ctx.HeaderHash()), // BlockHash
 		txHash,                               // TxHash
-		uint(k.GetTxIndexTransient(ctx)),     // TxIndex
-		uint(k.GetLogSizeTransient(ctx)),     // LogIndex
+		0,                                    // TxIndex
+		0,                                    // LogIndex
 	)
 }
 
 // VMConfig creates an EVM configuration from the debug setting and the extra EIPs enabled on the
 // module parameters. The config generated uses the default JumpTable from the EVM.
-func (k Keeper) VMConfig(ctx sdk.Context, _ core.Message, cfg *statedb.EVMConfig, tracer vm.EVMLogger) vm.Config {
+func (k Keeper) VMConfig(ctx sdk.Context, cfg *EVMConfig) vm.Config {
 	noBaseFee := true
 	if types.IsLondon(cfg.ChainConfig, ctx.BlockHeight()) {
-		noBaseFee = k.feeMarketKeeper.GetParams(ctx).NoBaseFee
+		noBaseFee = cfg.FeeMarketParams.NoBaseFee
 	}
 
 	return vm.Config{
-		Tracer:    tracer,
+		Tracer:    cfg.GetTracer(),
 		NoBaseFee: noBaseFee,
 		ExtraEips: cfg.Params.EIPs(),
 	}

@@ -82,7 +82,7 @@ if [[ $(uname) == "Linux" ]]; then
 		cd /tmp &&
 			git clone -b v"${ROCKSDB_VERSION}" --single-branch https://github.com/facebook/rocksdb.git &&
 			cd rocksdb &&
-			PORTABLE=1 WITH_JNI=0 WITH_BENCHMARK_TOOLS=0 WITH_TESTS=1 WITH_TOOLS=0 WITH_CORE_TOOLS=1 WITH_BZ2=1 WITH_LZ4=1 WITH_SNAPPY=1 WITH_ZLIB=1 WITH_ZSTD=1 WITH_GFLAGS=0 USE_RTTI=1 \
+			PORTABLE=1 DWITH_JEMALLOC=1 WITH_JNI=0 WITH_BENCHMARK_TOOLS=0 WITH_TESTS=1 WITH_TOOLS=0 WITH_CORE_TOOLS=1 WITH_BZ2=1 WITH_LZ4=1 WITH_SNAPPY=1 WITH_ZLIB=1 WITH_ZSTD=1 WITH_GFLAGS=0 USE_RTTI=1 \
 				make -j$(nproc) shared_lib &&
 				sudo make install-shared &&
 				sudo ldconfig &&
@@ -103,7 +103,7 @@ elif [[ $(uname) == "Darwin" ]]; then
 	cd /tmp && \
 		git clone -b v"${ROCKSDB_VERSION}" --single-branch https://github.com/facebook/rocksdb.git && \
 		cd rocksdb && \
-		PORTABLE=1 WITH_JNI=0 WITH_BENCHMARK_TOOLS=0 WITH_TESTS=1 WITH_TOOLS=0 WITH_CORE_TOOLS=1 WITH_BZ2=1 WITH_LZ4=1 WITH_SNAPPY=1 WITH_ZLIB=1 WITH_ZSTD=1 WITH_GFLAGS=0 USE_RTTI=1 \
+		PORTABLE=1 DWITH_JEMALLOC=1 WITH_JNI=0 WITH_BENCHMARK_TOOLS=0 WITH_TESTS=1 WITH_TOOLS=0 WITH_CORE_TOOLS=1 WITH_BZ2=1 WITH_LZ4=1 WITH_SNAPPY=1 WITH_ZLIB=1 WITH_ZSTD=1 WITH_GFLAGS=0 USE_RTTI=1 \
 			make -j$(nproc) shared_lib && \
 		cp librocksdb.dylib* /opt/homebrew/lib/ && \
 		cp -r include/* /opt/homebrew/include/ && \
