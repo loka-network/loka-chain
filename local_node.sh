@@ -132,17 +132,14 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	fi
 
 	# Set consensus timeouts
-    sed -i.bak 's/timeout_propose = ".*"/timeout_propose = "200ms"/g' "$CONFIG"
-    sed -i.bak 's/timeout_propose_delta = ".*"/timeout_propose_delta = "100ms"/g' "$CONFIG"
-    sed -i.bak 's/timeout_prevote = ".*"/timeout_prevote = "200ms"/g' "$CONFIG"
-    sed -i.bak 's/timeout_prevote_delta = ".*"/timeout_prevote_delta = "100ms"/g' "$CONFIG"
-    sed -i.bak 's/timeout_precommit = ".*"/timeout_precommit = "200ms"/g' "$CONFIG"
-    sed -i.bak 's/timeout_precommit_delta = ".*"/timeout_precommit_delta = "100ms"/g' "$CONFIG"
     sed -i.bak 's/timeout_commit = ".*"/timeout_commit = "1s"/g' "$CONFIG"
-    sed -i.bak 's/timeout_broadcast_tx_commit = "10s"/timeout_broadcast_tx_commit = "150s"/g' "$CONFIG"
 
-	# Set mempool size
+	# Set mempool size and other options
     sed -i.bak 's/^size = .*/size = 200000/g' "$CONFIG"
+	# Set indexer to null to disable indexing, options are "null", "kv" or "psql"
+    sed -i.bak 's/^indexer = ".*"/indexer = "null"/g' "$CONFIG"
+    sed -i.bak 's/addr_book_strict = .*/addr_book_strict = false/g' "$CONFIG"
+    sed -i.bak 's/recheck = .*/recheck = false/g' "$CONFIG"
 	if [[ "$COSMOS_BUILD_OPTIONS" == *"rocksdb"* ]]; then
     	sed -i.bak 's/db_backend = "goleveldb"/db_backend = "rocksdb"/g' "$CONFIG"
 	fi 
@@ -152,11 +149,14 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	sed -i.bak 's/"voting_period": "172800s"/"voting_period": "30s"/g' "$HOMEDIR"/config/genesis.json
 	sed -i.bak 's/"expedited_voting_period": "86400s"/"expedited_voting_period": "15s"/g' "$GENESIS"
 
-	# set custom pruning settings, archiving node, pruning = nothing
-	sed -i.bak 's/pruning = "default"/pruning = "nothing"/g' "$APP_TOML"
-	sed -i.bak 's/pruning-keep-recent = "0"/pruning-keep-recent = "2"/g' "$APP_TOML"
-	sed -i.bak 's/pruning-interval = "0"/pruning-interval = "10"/g' "$APP_TOML"
+	# set custom pruning settings, archiving node, pruning = nothing, default is 362880 blocks (~1 month)
+	# sed -i.bak 's/pruning = "default"/pruning = "nothing"/g' "$APP_TOML"
 	sed -i.bak 's/block-executor = ".*"/block-executor = "block-stm"/g' "$APP_TOML"
+	sed -i.bak 's/async-check-tx = .*/async-check-tx = true/g' "$APP_TOML"
+	sed -i.bak 's/async-commit-buffer = .*/async-commit-buffer = 16/g' "$APP_TOML"
+	sed -i.bak 's/index-events = \[\]/index-events = ["ethereum_tx.ethereumTxHash"]/g' "$APP_TOML"
+	# Enable memiavl
+	sed -i.bak '/^\[memiavl\]$/,/^\[/{ s/^enable = false$/enable = true/; }' "$APP_TOML"
 
 	# Allocate genesis accounts (cosmos formatted addresses)
 	for KEY in "${KEYS[@]}"; do

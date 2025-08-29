@@ -315,7 +315,6 @@ func (a appCreator) newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, a
 
 	home := cast.ToString(appOpts.Get(flags.FlagHome))
 
-	logger.Info("DB Backend:", appOpts.Get("db_backend").(string))
 	snapshotStore, err := sdkserver.GetSnapshotStore(appOpts)
 	if err != nil {
 		panic(err)
