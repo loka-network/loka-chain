@@ -58,6 +58,7 @@ LOKA operates on a three-layer model:
 For prerequisites and detailed build instructions please read the Installation instructions. Once the dependencies are installed, run:
 
 ```bash
+# MacOS require macOS 15 or later
 make install
 ```
 
