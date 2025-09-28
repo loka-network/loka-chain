@@ -4,12 +4,11 @@
 set -e
 
 # Check arguments
-if [ "$#" -lt 7 ]; then
-    echo "Usage: $0 <validator0_ip> <validator1_ip> <validator2_ip> <validator3_ip> <validator4_ip> <validator5_ip> <validator6_ip>"
-    echo "Example: $0 1.2.3.4 5.6.7.8 9.10.11.12 13.14.15.16 17.18.19.20 21.22.23.24 25.26.27.28"
+if [ "$#" -ne 4 ]; then
+    echo "Usage: $0 <validator0_ip> <validator1_ip> <validator2_ip> <validator3_ip> <validator4_ip>"
+    echo "Example: $0 1.2.3.4 5.6.7.8 9.10.11.12 13.14.15.16 17.18.19.20"
     exit 1
 fi
-
 # validate dependencies are installed
 command -v jq >/dev/null 2>&1 || {
     echo >&2 "jq not installed. More info: https://stedolan.github.io/jq/download/"
@@ -17,22 +16,24 @@ command -v jq >/dev/null 2>&1 || {
 }
 
 # Set number of validators
-NUM_VALIDATORS=7
+# NUM_VALIDATORS=7
 
+NUM_VALIDATORS=4
 # Store validator IPs in array
-declare -a VALIDATOR_IPS=($1 $2 $3 $4 $5 $6 $7)
+# declare -a VALIDATOR_IPS=("$1" "$2" "$3" "$4" "$5" "$6" "$7")
+declare -a VALIDATOR_IPS=("$1" "$2" "$3" "$4")
 echo "All validator IPs: ${VALIDATOR_IPS[@]}"
 echo "Number of validators: $NUM_VALIDATORS"
 
 # Configuration
 CHAIN_ID="loka_567000-1"
-KEYRING="test"
+KEYRING="file"
 KEYALGO="eth_secp256k1"
-DENOM="aloka"
-HOME_PREFIX="/data/lokad"
+DENOM="aaiusd"
+HOME_PREFIX="/root/lokad"
 # Set balance and stake amounts (matching local_node.sh exactly)
-GENESIS_BALANCE="1000000000000000000000000000" # 1 million loka
-GENTX_STAKE="1000000000000000000000000"        # 1 million loka (1000000000000000000000000 = 10^24)
+GENESIS_BALANCE="1000000000000000000000000" # 1 million loka
+GENTX_STAKE="10000000000000000000000"        # 10 thousand loka (1000000000000000000000000 = 10^22)
 BASEFEE=1000000000
 
 # Port configuration
@@ -66,12 +67,13 @@ for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
         continue
     fi
     echo "Cleaning up data on $TARGET_IP..."
-    ssh ubuntu@${TARGET_IP} "pkill lokad || true; rm -rf \"${HOME_PREFIX}\" \"${HOME_PREFIX}\"* 2>/dev/null || true"
+    # ssh ubuntu@${TARGET_IP} "pkill lokad || true; rm -rf \"${HOME_PREFIX}\" \"${HOME_PREFIX}\"* 2>/dev/null || true"
+    ssh root@"${TARGET_IP}" "pkill lokad || true; if [[ -z '${HOME_PREFIX}' || '${HOME_PREFIX}' = '/' || '${HOME_PREFIX}' = '.' ]]; then echo 'Refusing to remove HOME_PREFIX' >&2; exit 1; fi; rm -rf '${HOME_PREFIX}' '${HOME_PREFIX}'* 2>/dev/null || true"
 done
 
 # Initialize primary node
 echo "Initializing primary node..."
-lokad init "node0" -o --chain-id="${CHAIN_ID}" --home "${HOME_PREFIX}"
+lokad init "node0" -o --chain-id="${CHAIN_ID}" --home "${HOME_PREFIX}" --keyring-backend="${KEYRING}"
 
 # Path variables
 GENESIS="${HOME_PREFIX}/config/genesis.json"
@@ -88,16 +90,19 @@ for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
         --home "${HOME_PREFIX}"
 
     echo "Adding genesis account for validator ${KEYS[$i]}..."
-    lokad add-genesis-account "${KEYS[$i]}" "${GENESIS_BALANCE}${DENOM},${GENESIS_BALANCE}gas" \
+    lokad add-genesis-account "${KEYS[$i]}" "${GENESIS_BALANCE}${DENOM}" \
         --keyring-backend="${KEYRING}" \
         --home "${HOME_PREFIX}"
 done
 
-# Change parameter token denominations to aloka
+# Change parameter token denominations to ${DENOM}
 jq --arg denom "$DENOM" '.app_state["staking"]["params"]["bond_denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq --arg denom "$DENOM" '.app_state["crisis"]["constant_fee"]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 jq --arg denom "$DENOM" '.app_state["gov"]["params"]["min_deposit"][0]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-jq --arg denom "$DENOM" '.app_state["gov"]["params"]["min_deposit"][0]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq --arg denom "$DENOM" '.app_state["gov"]["params"]["expedited_min_deposit"][0]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq --arg denom "$DENOM" '.app_state["evm"]["params"]["evm_denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 jq --arg denom "$DENOM" '.app_state["inflation"]["params"]["mint_denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+
 
 # Set gas limit in genesis
 jq '.consensus_params["block"]["max_gas"]="10000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
@@ -118,7 +123,7 @@ jq '.app_state["claims"]["params"]["duration_until_decay"]="100000s"' "$GENESIS"
 
 # Claim module account:
 # 0xA61808Fe40fEb8B3433778BBC2ecECCAA47c8c47 || loka15cvq3ljql6utxseh0zau9m8ve2j8erz8xrvsjp
-jq -r --arg amount_to_claim "$amount_to_claim" '.app_state["bank"]["balances"] += [{"address":"loka15cvq3ljql6utxseh0zau9m8ve2j8erz8xrvsjp","coins":[{"denom":"aloka", "amount":$amount_to_claim}, {"denom":"gas", "amount":$amount_to_claim}]}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq -r --arg denom "$DENOM" --arg amount_to_claim "$amount_to_claim" '.app_state["bank"]["balances"] += [{"address":"loka15cvq3ljql6utxseh0zau9m8ve2j8erz8xrvsjp","coins":[{"denom":$denom, "amount":$amount_to_claim}]}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 # Change proposal periods to pass within a reasonable time
 sed -i.bak 's/"max_deposit_period": "172800s"/"max_deposit_period": "30s"/g' "$GENESIS"
@@ -128,10 +133,16 @@ sed -i.bak 's/"expedited_voting_period": "86400s"/"expedited_voting_period": "15
 # Create gentx directory in primary node
 mkdir -p "${HOME_PREFIX}/config/gentx"
 
+# Ensure bc is installed
+command -v bc >/dev/null 2>&1 || { echo >&2 "bc not installed."; exit 1; }
+
 # Calculate total supply including claims amount
 total_supply=$(echo "$NUM_VALIDATORS * $GENESIS_BALANCE + $amount_to_claim" | bc)
-jq -r --arg total_supply "$total_supply" '.app_state["bank"]["supply"][0]["amount"]=$total_supply' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-jq -r --arg total_supply "$total_supply" '.app_state["bank"]["supply"][1]["amount"]=$total_supply' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+# Update only the ${DENOM} supply entry
+jq -r --arg total_supply "$total_supply" --arg denom "$DENOM" '
+    .app_state["bank"]["supply"] |=
+    (map(if .denom == $denom then .amount = $total_supply else . end))
+' "$GENESIS" >"$TMP_GENESIS" && mv "$GENESIS" "$GENESIS.bak" && mv "$TMP_GENESIS" "$GENESIS"
 
 # Create clone directories, gentx, and get node IDs
 declare -a NODE_IDS
@@ -141,7 +152,7 @@ for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
 
     # Initialize fresh node
     rm -rf "${CLONE_HOME}"
-    lokad init "node$i" --chain-id="${CHAIN_ID}" --home "${CLONE_HOME}" >/dev/null 2>&1
+    lokad init "node$i" --chain-id="${CHAIN_ID}" --home "${CLONE_HOME}" --keyring-backend="${KEYRING}" >/dev/null 2>&1
 
     # Get and store node ID early
     NODE_IDS[$i]=$(lokad tendermint show-node-id --home "${CLONE_HOME}")
@@ -149,7 +160,7 @@ for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
 
     # Copy necessary files from primary node
     cp "${HOME_PREFIX}/config/genesis.json" "${CLONE_HOME}/config/"
-    cp -r "${HOME_PREFIX}/keyring-test" "${CLONE_HOME}/" 2>/dev/null || true
+    cp -r "${HOME_PREFIX}/keyring-file" "${CLONE_HOME}/" 2>/dev/null || true
     mkdir -p "${CLONE_HOME}/config/gentx"
 
     # Set pruning to nothing for archive mode and configure settings
@@ -157,15 +168,12 @@ for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
     CONFIG_TOML="${CLONE_HOME}/config/config.toml"
 
     # Archive mode settings
-    sed -i.bak 's/^pruning = "default"/pruning = "nothing"/' "$APP_TOML"
+    # sed -i.bak 's/^pruning = "default"/pruning = "nothing"/' "$APP_TOML"
 
     # Configure external access in config.toml
     # Update RPC and P2P ports
     sed -i.bak -e '/^\[rpc\]/,/^\[/s|^laddr *= *.*|laddr = "tcp://0.0.0.0:26657"|' "$CONFIG_TOML"
     sed -i.bak -e '/^\[p2p\]/,/^\[/s|^laddr *= *.*|laddr = "tcp://0.0.0.0:26656"|' "$CONFIG_TOML"
-
-    # Set mempool type to narwhal
-    sed -i.bak -e '/^\[mempool\]/,/^\[/s|^type *= *.*|type = "narwhal"|' "$CONFIG_TOML"
 
     # Update other settings
     sed -i.bak \
@@ -176,7 +184,13 @@ for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
         "$CONFIG_TOML"
 
     # Set minimum gas price
-    sed -i.bak 's/^minimum-gas-prices *=.*/minimum-gas-prices = "0.0001gas"/g' "$APP_TOML"
+    sed -i.bak "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0.0001${DENOM}\"/g" "$APP_TOML"
+    sed -i.bak 's/block-executor = ".*"/block-executor = "block-stm"/g' "$APP_TOML"
+    sed -i.bak 's/async-check-tx = .*/async-check-tx = true/g' "$APP_TOML"
+    sed -i.bak 's/async-commit-buffer = .*/async-commit-buffer = 16/g' "$APP_TOML"
+    sed -i.bak 's/index-events = \[\]/index-events = ["ethereum_tx.ethereumTxHash"]/g' "$APP_TOML"
+    # Enable memiavl
+    sed -i.bak '/^\[memiavl\]$/,/^\[/{ s/^enable = false$/enable = true/; }' "$APP_TOML"
 
     # Configure API and EVM settings in app.toml
     sed -i.bak \
@@ -200,6 +214,13 @@ for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
     sed -i.bak 's/timeout_precommit_delta = ".*"/timeout_precommit_delta = "100ms"/g' "$CONFIG_TOML"
     sed -i.bak 's/timeout_commit = ".*"/timeout_commit = "1s"/g' "$CONFIG_TOML"
     sed -i.bak 's/timeout_broadcast_tx_commit = "10s"/timeout_broadcast_tx_commit = "150s"/g' "$CONFIG_TOML"
+
+    # Set mempool size and other options
+    sed -i.bak 's/^size = .*/size = 2000/g' "$CONFIG_TOML"
+	# Set indexer to null to disable indexing, options are "null", "kv" or "psql"
+    sed -i.bak 's/^indexer = ".*"/indexer = "null"/g' "$CONFIG_TOML"
+    sed -i.bak 's/addr_book_strict = .*/addr_book_strict = false/g' "$CONFIG_TOML"
+    sed -i.bak 's/recheck = .*/recheck = false/g' "$CONFIG_TOML"
 
     # Use the corresponding validator IP
     PUBLIC_IP=${VALIDATOR_IPS[$i]}
@@ -252,7 +273,8 @@ for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
 
     # Configure peers
     echo "Configuring peers for node $i..."
-    sed -i.bak -e "s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" "${CLONE_HOME}/config/config.toml"
+    echo "PEERS for node $i: $PEERS"
+    sed -i.bak -e "s|^persistent_peers *=.*|persistent_peers = \"${PEERS}\"|" "${CLONE_HOME}/config/config.toml"
 done
 
 # Copy genesis to all validators
@@ -271,9 +293,11 @@ for i in $(seq 0 $((NUM_VALIDATORS - 1))); do
     fi
     echo "Copying validator $i data to $TARGET_IP..."
     # First remove the old directory on remote
-    ssh ubuntu@${TARGET_IP} "rm -rf ${HOME_PREFIX}${i}"
+    # ssh ubuntu@${TARGET_IP} "rm -rf ${HOME_PREFIX}${i}"
+    ssh root@${TARGET_IP} "rm -rf ${HOME_PREFIX}${i}"
     # Then copy the new data
-    rsync -av "${HOME_PREFIX}${i}/" "ubuntu@${TARGET_IP}:${HOME_PREFIX}${i}/"
+    # rsync -av "${HOME_PREFIX}${i}/" "ubuntu@${TARGET_IP}:${HOME_PREFIX}${i}/"
+    rsync -av "${HOME_PREFIX}${i}/" "root@${TARGET_IP}:${HOME_PREFIX}${i}/"
 done
 
 echo "All validators initialized successfully!"
