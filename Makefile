@@ -554,8 +554,40 @@ localnet-show-logstream:
 ###############################################################################
 
 PACKAGE_NAME:=github.com/loka/loka
-GOLANG_CROSS_VERSION  = v1.23.3
+
+# goreleaser-cross image — pinned by sha256 digest for reproducibility.
+#
+# The :v1.23.3 tag refers to the embedded Go toolchain version (kept in sync
+# with `go 1.23.3` in go.mod). The image itself rolls forward whenever the
+# upstream maintainers push, which can silently change the goreleaser CLI
+# version inside it (v1 -> v2 broke `--skip-validate`, for example). Pinning
+# the digest freezes the entire image — Go toolchain, goreleaser binary,
+# every dependency — to the exact bytes used by a known-good CI run.
+#
+# To refresh after a deliberate upgrade:
+#   docker pull ghcr.io/goreleaser/goreleaser-cross:v1.23.3
+#   docker inspect --format='{{index .RepoDigests 0}}' \
+#       ghcr.io/goreleaser/goreleaser-cross:v1.23.3
+# Then paste the new sha256 into GORELEASER_CROSS_DIGEST below and update
+# GOLANG_CROSS_VERSION if the Go toolchain moved.
+GOLANG_CROSS_VERSION    = v1.23.3
+GORELEASER_CROSS_DIGEST = sha256:54a75d679be7be63a333da24d695e538c9e43cd0c0825a5e07183c91d6a5bbfa
+GORELEASER_CROSS_IMAGE  = ghcr.io/goreleaser/goreleaser-cross@$(GORELEASER_CROSS_DIGEST)
+
 GOPATH ?= '$(HOME)/go'
+# Validate .goreleaser.yml against the goreleaser v2 schema.
+# Runs in ~5 seconds (no compilation) — meant for CI to catch config
+# errors before triggering a full cross-build. Local devs who want to
+# confirm cross-compilation actually works should run release-dry-run
+# instead.
+release-check:
+	docker run \
+		--rm \
+		-v `pwd`:/go/src/$(PACKAGE_NAME) \
+		-w /go/src/$(PACKAGE_NAME) \
+		$(GORELEASER_CROSS_IMAGE) \
+		check
+
 release-dry-run:
 	docker run \
 		--rm \
@@ -565,8 +597,8 @@ release-dry-run:
 		-v `pwd`:/go/src/$(PACKAGE_NAME) \
 		-v ${GOPATH}/pkg:/go/pkg \
 		-w /go/src/$(PACKAGE_NAME) \
-		ghcr.io/goreleaser/goreleaser-cross:${GOLANG_CROSS_VERSION} \
-		--clean --skip-validate --skip-publish --snapshot
+		$(GORELEASER_CROSS_IMAGE) \
+		release --clean --skip=validate,publish --snapshot
 
 release:
 	@if [ ! -f ".release-env" ]; then \
@@ -581,10 +613,10 @@ release:
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v `pwd`:/go/src/$(PACKAGE_NAME) \
 		-w /go/src/$(PACKAGE_NAME) \
-		ghcr.io/goreleaser/goreleaser-cross:${GOLANG_CROSS_VERSION} \
-		release --clean --skip-validate
+		$(GORELEASER_CROSS_IMAGE) \
+		release --clean --skip=validate
 
-.PHONY: release-dry-run release
+.PHONY: release-check release-dry-run release
 
 ###############################################################################
 ###                        Compile Solidity Contracts                       ###

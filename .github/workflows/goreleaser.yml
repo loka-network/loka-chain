@@ -4,6 +4,14 @@ on:
   push:
     tags:
       - "v*.*.*"
+
+# GITHUB_TOKEN needs `contents: write` to create the GitHub Release
+# from goreleaser's "scm releases" step. Newer repos default the token
+# to read-only ("Resource not accessible by integration" / HTTP 403),
+# so we grant the minimum required scope explicitly here.
+permissions:
+  contents: write
+
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
@@ -17,8 +25,17 @@ jobs:
         with:
           go-version: '1.23.3'
           check-latest: true
-      - name: release dry run
-        run: make release-dry-run
+      # Validate .goreleaser.yml against the goreleaser v2 schema.
+      # The previous "make release-dry-run" step compiled all 5 platforms
+      # with CGO just to throw the artifacts away (snapshot mode emits
+      # fake "-next" versions). That doubled the release wall time
+      # (~15 min × 2) for no real safety benefit — goreleaser v2 already
+      # validates the config at load time, so a misconfigured pipeline
+      # would also fail the real "make release" step on its very first
+      # second. `goreleaser check` does only the schema validation —
+      # ~5 seconds, no cross-compile.
+      - name: validate goreleaser config
+        run: make release-check
       - name: setup release environment
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
