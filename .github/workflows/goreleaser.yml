@@ -33,7 +33,7 @@ jobs:
       # validates the config at load time, so a misconfigured pipeline
       # would also fail the real "make release" step on its very first
       # second. `goreleaser check` does only the schema validation —
-      # ~5 seconds, no cross-compile.
+      # ~5 seconds, no cross-compile, quickly.
       - name: validate goreleaser config
         run: make release-check
       - name: setup release environment
