@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 210" width="720" height="210">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0F2540"/>
+      <stop offset="100%" stop-color="#070F1C"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#FFE69C"/>
+      <stop offset="50%"  stop-color="#FFD86B"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <style>
+      .row {
+        font-family: 'Menlo','Monaco','Consolas','DejaVu Sans Mono','Liberation Mono','Courier New',monospace;
+        font-size: 22px;
+        font-weight: 700;
+        fill: url(#gold);
+      }
+      .tag {
+        font-family: 'Menlo','PingFang SC','Helvetica',sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        fill: #FFD86B;
+        letter-spacing: 3px;
+      }
+    </style>
+  </defs>
+
+  <rect width="100%" height="100%" rx="14" fill="url(#bg)"/>
+
+  <text x="50%" y="40"  text-anchor="middle" xml:space="preserve" class="row">██╗      ██████╗ ██╗  ██╗ █████╗ </text>
+  <text x="50%" y="65"  text-anchor="middle" xml:space="preserve" class="row">██║     ██╔═══██╗██║ ██╔╝██╔══██╗</text>
+  <text x="50%" y="90"  text-anchor="middle" xml:space="preserve" class="row">██║     ██║   ██║█████╔╝ ███████║</text>
+  <text x="50%" y="115" text-anchor="middle" xml:space="preserve" class="row">██║     ██║   ██║██╔═██╗ ██╔══██║</text>
+  <text x="50%" y="140" text-anchor="middle" xml:space="preserve" class="row">███████╗╚██████╔╝██║  ██╗██║  ██║</text>
+  <text x="50%" y="165" text-anchor="middle" xml:space="preserve" class="row">╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝</text>
+
+  <text x="50%" y="195" text-anchor="middle" class="tag">⚡  Parallel EVM  ·  NeoBFT + Block-STM  ·  300K TPS  ⚡</text>
+</svg>
